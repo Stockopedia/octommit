@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  BATCH_DATA_SYNC_SCHEDULE: "*/15 * * * *"
+kind: ConfigMap
+metadata:
+  name: directory-service-config
+  annotations:
+      strategy.spinnaker.io/versioned: "false"
+  namespace: app
