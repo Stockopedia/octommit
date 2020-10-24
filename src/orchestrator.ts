@@ -1,59 +1,31 @@
 import * as Vorpal from 'vorpal';
-import { GitClient } from './git-client';
-import { YamlFileBuilder } from './yaml-file-builder';
-import { Config } from './config';
+import { UpdateCommand, UpdateArgs, UpdateValidator } from './commands';
 
 export class Orchestrator {
   private readonly vorpal: Vorpal;
-  private readonly command: Vorpal.Command;
 
-  constructor(private readonly gitClient: GitClient, private readonly yamlFileBuilder: YamlFileBuilder, private readonly config: Config) {
+  constructor(updateCommand: UpdateCommand, updateValidator: UpdateValidator) {
     this.vorpal = new Vorpal()
-    this.command = this.vorpal.command('update', 'Update a yaml file in git')
-    this.command.action(this.action.bind(this))
-  }
 
-  withOptions(options: [string, string][]): Orchestrator {
-    options.forEach(([option, desc]) => {
-      this.command.option(option, desc)
-    })
-
-    return this;
+    this.vorpal.command('update', 'Update a yaml file in git')
+      .option('--repo <repo>', 'Reopsitory')
+      .option('--set [<path>]=<value>', 'Path to target and the desired value e.g. image.tag=bla')
+      .option('--path <path>', 'Path to file in repo')
+      .option('--outputPath <path>', 'Output path of file in repo')
+      .option('--org <org>', 'The github organisation')
+      .option('--token <token>', 'The github personal access token')
+      .option('--message <message>', 'The github commit message')
+      .option('--o', 'Whether or not to output the resulting file')
+      .validate(args => updateValidator.validate(args.options as UpdateArgs))
+      .action(async (args) => {
+        const result = await updateCommand.action(args.options as UpdateArgs)
+        if(args.options.o) {
+          this.vorpal.log(result)
+        }
+      })
   }
 
   create() {
     return this.vorpal
-  }
-
-  private async action(args: Vorpal.Args): Promise<void> {
-    const { repo, path, outputPath, set } = args.options
-    const file = await this.gitClient.getFile(path ?? this.config.path, repo ?? this.config.repo);
-    const targets = this.getTargets(set);
-    const builder = this.yamlFileBuilder.haystack(file);
-
-    targets.forEach(({path, value}) => {
-      builder.setValue(path!, value!);
-    })
-
-    this.vorpal.log(builder.build())
-}
-
-  private getTargets(target: string | string[]) {
-    if(target === undefined) {
-      return [{
-        path: this.config.target,
-        value: this.config.value
-      }]
-    }
-    if(!Array.isArray(target)) {
-      return [this.extractPathAndValue(target)]
-    }
-    return target.map(t => this.extractPathAndValue(t))
-  }
-
-  private extractPathAndValue(arg: string) {
-    const [path, value] = arg.split("=")
-  
-    return { path: path.slice(0, -1).substring(1), value };
   }
 }

@@ -1,33 +1,48 @@
 import { container, instanceCachingFactory } from "tsyringe";
+import { UpdateParamsBuilder, UpdateCommand, UpdateValidator } from './commands'
 import { Orchestrator } from './orchestrator';
-import { GitClient } from './git-client';
+import { GitClient, YamlStringBuilder } from './shared';
 import { Octokit } from '@octokit/rest';
-import { GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, PATH, TARGET } from './env';
-import { YamlFileBuilder } from './yaml-file-builder';
-import { Config } from './config';
+import { ConfigHolder, Config, GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, PATH, TARGET, OUTPUT_BRANCH, TARGET_BRANCH } from './var';
 
 enum Symbols {
   Config = 'config'
 }
 
 container.register<Config>(Symbols.Config, {
-  useValue: {
+  useValue: new ConfigHolder({
     target: TARGET,
     repo: REPO,
     value: VALUE,
     path: PATH,
-    outputPath: OUTPUT_PATH
-  }
+    outputPath: OUTPUT_PATH,
+    org: ORG,
+    githubAccessToken: GITHUB_ACCESS_TOKEN,
+    targetBranch: TARGET_BRANCH,
+    outputBranch: OUTPUT_BRANCH
+  }).get()
+})
+
+container​​.register<UpdateParamsBuilder>(UpdateParamsBuilder, {
+  useFactory: (c) => new UpdateParamsBuilder(c.resolve(Symbols.Config))
+})
+
+container​​.register<UpdateValidator>(UpdateValidator, {
+  useFactory: (c) => new UpdateValidator(c.resolve(UpdateParamsBuilder))
+})
+
+container​​.register<UpdateCommand>(UpdateCommand, {
+  useFactory: (c) => new UpdateCommand(c.resolve(GitClient), c.resolve(YamlStringBuilder), c.resolve(UpdateParamsBuilder))
 })
 
 container.register<Orchestrator>(Orchestrator, {
   useFactory: instanceCachingFactory(
-    (c) => new Orchestrator(c.resolve(GitClient), c.resolve(YamlFileBuilder), c.resolve(Symbols.Config))
+    (c) => new Orchestrator(c.resolve(UpdateCommand), c.resolve(UpdateValidator))
   ),
 });
 
-container.register<YamlFileBuilder>(YamlFileBuilder, {
-  useClass: YamlFileBuilder
+container.register<YamlStringBuilder>(YamlStringBuilder, {
+  useClass: YamlStringBuilder
 })
 
 container.register<Octokit>(Octokit, {
@@ -36,7 +51,7 @@ container.register<Octokit>(Octokit, {
 
 container.register<GitClient>(GitClient, {
   useFactory: instanceCachingFactory(
-    (c) => new GitClient(c.resolve(Octokit), ORG)
+    (c) => new GitClient(c.resolve(Octokit))
   ),
 })
 

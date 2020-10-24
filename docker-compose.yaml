@@ -1,9 +1,8 @@
 version: '3'
 services:
-  api:
+  console_app:
     build: .
-    ports:
-     - "3000:3000"
     env_file: .env
+    command: ["update --set [image.tag]=bla --o"]
     volumes:
      - .:/usr/src/app

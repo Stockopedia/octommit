@@ -9,3 +9,5 @@ export const VALUE: string | undefined = process.env.VALUE
 export const TARGET: string | undefined = process.env.TARGET
 export const OUTPUT_PATH: string | undefined = process.env.OUTPUT_PATH
 export const PATH: string | undefined = process.env.FILE_PATH
+export const TARGET_BRANCH: string | undefined = process.env.TARGET_BRANCH
+export const OUTPUT_BRANCH: string | undefined = process.env.OUTPUT_BRANCH
