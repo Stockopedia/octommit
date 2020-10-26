@@ -3,6 +3,5 @@ services:
   console_app:
     build: .
     env_file: .env
-    command: ["update --set [image.tag]=8893009 --o --pr"]
     volumes:
      - .:/usr/src/app

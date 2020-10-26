@@ -18,4 +18,4 @@ COPY package*.json /app/
 
 ENV NODE_ENV production
 
-ENTRYPOINT [ "npm", "run", "start" ]
+RUN npm link
