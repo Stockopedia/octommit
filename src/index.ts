@@ -5,4 +5,10 @@ import { Orchestrator } from './orchestrator'
 
 const client = container.resolve(Orchestrator)
   .create()
-client.parse(process.argv);
+  try {
+    client.parse(process.argv);
+  }
+  catch(e) {
+    client.log(e)
+    process.exit(1)
+  }

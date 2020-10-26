@@ -43,6 +43,7 @@ export class Orchestrator {
         catch(e) {
           if(e instanceof HandledError) {
             this.vorpal.log(`Error: ${chalk.red(e.message)}`)
+            process.exit(1)
           }
         }
       })
