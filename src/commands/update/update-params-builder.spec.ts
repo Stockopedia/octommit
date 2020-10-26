@@ -8,7 +8,7 @@ describe('update params builder', () => {
       path: '',
       set: '',
       outputPath: '',
-      targetBranch: '',
+      sourceBranch: '',
       outputBranch: '',
       message: '',
       org: '',
@@ -20,7 +20,7 @@ describe('update params builder', () => {
     expect(args.path).toContain('config')
     expect(args.outputBranch).toContain('config')
     expect(args.outputPath).toContain('config')
-    expect(args.targetBranch).toContain('config')
+    expect(args.sourceBranch).toContain('config')
     expect(args.org).toContain('config')
     expect(args.repo).toContain('config')
   })
@@ -42,7 +42,7 @@ function makeConfig({
   repo = 'config_repo',
   outputPath = 'config_outputPath',
   org = 'config_org',
-  targetBranch = 'config_targetBranch',
+  sourceBranch = 'config_sourceBranch',
   outputBranch = 'config_outputBranch',
   commitMessage = 'config_commit',
   pr = false
@@ -55,7 +55,7 @@ function makeConfig({
     repo,
     outputPath,
     org,
-    targetBranch,
+    sourceBranch,
     outputBranch,
     commitMessage,
     githubAccessToken: 'token',
@@ -67,7 +67,7 @@ function makeArgs({
   org = 'org',
   repo = 'repo',
   outputPath = 'outputPath',
-  targetBranch = 'targetBranch',
+  sourceBranch = 'sourceBranch',
   outputBranch = 'outputBranch',
   message = 'mesage',
   set = '[bla]=yo',
@@ -80,7 +80,7 @@ function makeArgs({
     org,
     outputBranch,
     outputPath,
-    targetBranch,
+    sourceBranch,
     set,
     pr
   }

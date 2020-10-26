@@ -1,7 +1,13 @@
 {
-  "name": "typescript-express",
-  "version": "1.0.8",
-  "private": true,
+  "name": "octommit",
+  "description": "cli program to update files in git",
+  "version": "1.0.0",
+  "author": {
+    "name": "Stockopedia"
+  },
+  "repository": {
+    "url": "https://github.com/Stockopedia/octommit"
+  },
   "scripts": {
     "debug": "npm run build && npm run start",
     "test": "jest",

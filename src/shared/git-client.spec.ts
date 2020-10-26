@@ -11,7 +11,7 @@ describe('git client', () => {
   const testRepoName = 'some-repo';
   const pathToFile = 'path/to/file.yaml';
   const testOrgName = 'some_org';
-  const testTargetBranch = 'main';
+  const testsourceBranch = 'main';
   const testOutputBranch = 'main';
   const testMessage = 'test message';
   const existingFileSha = "test existing file sha"
@@ -88,7 +88,7 @@ describe('git client', () => {
       const eventEmitter = new EventEmitter()
       const client = new GitClient(octokit, eventEmitter)
       beforeAll(async () => {
-        await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, testOutputBranch, pathToFile, testMessage, existingFileSha)
+        await client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, testOutputBranch, pathToFile, testMessage, existingFileSha)
       })
   
       it('should not attempt to get ref', () => {
@@ -137,7 +137,7 @@ describe('git client', () => {
   
         beforeAll(async () => {
           eventEmitter.on('log', mockLogListener)
-          await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
+          await client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
         })
         it('should use existing branch', () => {
           expect(octokit.git.getRef).toHaveBeenCalledTimes(1)
@@ -175,7 +175,7 @@ describe('git client', () => {
         const client = new GitClient(octokit, eventEmitter)
 
         it('should throw handled exception', async () => {
-          await expect(client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+          await expect(client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
             .rejects
             .toThrowError(HandledError)
         })
@@ -219,7 +219,7 @@ describe('git client', () => {
   
         beforeAll(async () => {
           eventEmitter.on('log', mockLogListener)
-          await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
+          await client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
         })
   
         it('should create a new branch', () => {
@@ -273,7 +273,7 @@ describe('git client', () => {
         const client = new GitClient(octokit, eventEmitter)
 
         it('should thorw handled error', async () => {
-          await expect(client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+          await expect(client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
             .rejects
             .toThrowError(HandledError)
         })
@@ -300,7 +300,7 @@ describe('git client', () => {
       const client = new GitClient(octokit, eventEmitter)
 
       it('should throw a handled expection', async () => {
-        await expect(client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+        await expect(client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
           .rejects
           .toThrowError(HandledError)
       })
@@ -322,7 +322,7 @@ describe('git client', () => {
       const client = new GitClient(octokit, eventEmitter)
   
       it('should return pull request url', async () => {
-        const result = await client.createPullRequest(testOutputBranch, testRepoName, "pr title", testTargetBranch, testOutputBranch);
+        const result = await client.createPullRequest(testOutputBranch, testRepoName, "pr title", testsourceBranch, testOutputBranch);
 
         expect(result).toBe("test.url")
       })
@@ -335,7 +335,7 @@ describe('git client', () => {
       })
       const client = new GitClient(octokit, eventEmitter)
       it('should throw handled error', async () => {
-        await expect(client.createPullRequest(testOutputBranch, testRepoName, "pr title", testTargetBranch, testOutputBranch))
+        await expect(client.createPullRequest(testOutputBranch, testRepoName, "pr title", testsourceBranch, testOutputBranch))
           .rejects
           .toThrowError(HandledError)
       })

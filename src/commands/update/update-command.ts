@@ -8,7 +8,7 @@ export class UpdateCommand {
   }
 
   async action(args: UpdateArgs): Promise<string> {
-    const { repo, path, org, targets, targetBranch, outputBranch, outputPath, message, pr } = this.paramBuilder.build(args);
+    const { repo, path, org, targets, sourceBranch, outputBranch, outputPath, message, pr } = this.paramBuilder.build(args);
 
     const { data: file, sha } = await this.gitClient.getFile(path, repo, org);
     const builder = this.yamlStringBuilder.haystack(file);
@@ -17,10 +17,10 @@ export class UpdateCommand {
       builder.setValue(path!, value!);
     })
 
-    const result = await this.gitClient.putFile(builder.build(), repo, org, targetBranch, outputBranch, outputPath, message, sha);
+    const result = await this.gitClient.putFile(builder.build(), repo, org, sourceBranch, outputBranch, outputPath, message, sha);
 
     if(pr) {
-      return await this.gitClient.createPullRequest(org, repo, message, targetBranch, outputBranch)
+      return await this.gitClient.createPullRequest(org, repo, message, sourceBranch, outputBranch)
     }
     return result
   }

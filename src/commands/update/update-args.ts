@@ -1,9 +1,9 @@
 export interface UpdateArgs {
-  path: string;
+  sourcePath: string;
   org: string;
   repo: string;
   outputPath: string;
-  targetBranch: string;
+  sourceBranch: string;
   outputBranch: string;
   message: string;
   pr: boolean
@@ -11,11 +11,11 @@ export interface UpdateArgs {
 }
 
 export interface UpdateParams {
-  path: string;
+  sourcePath: string;
   org: string;
   repo: string;
   outputPath: string;
-  targetBranch: string;
+  sourceBranch: string;
   outputBranch: string;
   message: string;
   pr: boolean

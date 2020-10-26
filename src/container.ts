@@ -3,7 +3,7 @@ import { UpdateParamsBuilder, UpdateCommand, UpdateValidator } from './commands'
 import { Orchestrator } from './orchestrator';
 import { GitClient, YamlStringBuilder } from './shared';
 import { Octokit } from '@octokit/rest';
-import { ConfigHolder, Config, CREATE_PR, GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, PATH, TARGET, COMMIT_MESSAGE, OUTPUT_BRANCH, TARGET_BRANCH } from './var';
+import { ConfigHolder, Config, CREATE_PR, GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, SOURCE_PATH, VALUE_PATH, COMMIT_MESSAGE, OUTPUT_BRANCH, SOURCE_BRANCH } from './var';
 import { EventEmitter } from "events";
 
 enum Symbols {
@@ -12,14 +12,14 @@ enum Symbols {
 
 container.register<Config>(Symbols.Config, {
   useValue: new ConfigHolder({
-    target: TARGET,
+    targetValuePath: VALUE_PATH,
     repo: REPO,
     value: VALUE,
-    path: PATH,
+    sourcePath: SOURCE_PATH,
     outputPath: OUTPUT_PATH,
     org: ORG,
     githubAccessToken: GITHUB_ACCESS_TOKEN,
-    targetBranch: TARGET_BRANCH,
+    sourceBranch: SOURCE_BRANCH,
     outputBranch: OUTPUT_BRANCH,
     commitMessage: COMMIT_MESSAGE,
     pr: CREATE_PR

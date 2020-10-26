@@ -29,7 +29,7 @@ bar: yo2
     it('should set values at paths in yaml file', async () => {
       await new UpdateCommand(gitClient, new YamlStringBuilder(), new UpdateParamsBuilder({} as any)).action(args)
 
-      expect(gitClient.putFile).toHaveBeenCalledWith(expectedFile, args.repo, args.org, args.targetBranch, args.outputBranch, args.outputPath, args.message, 'testSha')
+      expect(gitClient.putFile).toHaveBeenCalledWith(expectedFile, args.repo, args.org, args.sourceBranch, args.outputBranch, args.outputPath, args.message, 'testSha')
     })
     describe('when not creating a pr', () => {
       it('should return yaml file url', async () => {
@@ -58,7 +58,7 @@ function makeArgs({
   org = 'org',
   repo = 'repo',
   outputPath = 'outputPath',
-  targetBranch = 'targetBranch',
+  sourceBranch = 'sourceBranch',
   outputBranch = 'outputBranch',
   message = 'mesage',
   set = ['[foo]=yo', '[bar]=yo2'],
@@ -71,7 +71,7 @@ function makeArgs({
     org,
     outputBranch,
     outputPath,
-    targetBranch,
+    sourceBranch,
     set,
     pr
   }

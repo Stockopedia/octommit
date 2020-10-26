@@ -23,8 +23,8 @@ export class GitClient {
     }
   }
 
-  async putFile(data: string, repo: string, org: string, targetBranch: string, outputBranch: string, outputPath: string, message: string, sha: string): Promise<string> {
-    const branchRef = await this.getBranchRef(repo, org, targetBranch, outputBranch);
+  async putFile(data: string, repo: string, org: string, sourceBranch: string, outputBranch: string, outputPath: string, message: string, sha: string): Promise<string> {
+    const branchRef = await this.getBranchRef(repo, org, sourceBranch, outputBranch);
 
     try {
       const result = await this.octokit.repos.createOrUpdateFileContents({
@@ -43,26 +43,26 @@ export class GitClient {
     }
   }
 
-  async createPullRequest(org: string, repo: string, title: string, targetBranch: string, outputBranch: string) {
+  async createPullRequest(org: string, repo: string, title: string, sourceBranch: string, outputBranch: string) {
     try {
       const { data } = await this.octokit.pulls.create({
         owner: org,
         repo,
         title,
         head: outputBranch,
-        base: targetBranch,
+        base: sourceBranch,
       });
 
       return data.url
     }
     catch(e) {
-      throw new HandledError(`unable to create PR for between branches: ${targetBranch} and ${outputBranch}`, e)
+      throw new HandledError(`unable to create PR for between branches: ${sourceBranch} and ${outputBranch}`, e)
     }
   }
 
-  private async getBranchRef(repo: string, org: string, targetBranch: string, outputBranch: string) {
-    if(outputBranch === targetBranch) {
-      return targetBranch
+  private async getBranchRef(repo: string, org: string, sourceBranch: string, outputBranch: string) {
+    if(outputBranch === sourceBranch) {
+      return sourceBranch
     }
 
     try {
@@ -77,11 +77,11 @@ export class GitClient {
       return existingRefData.ref
     }
     catch(e) {
-      return this.createBranch(repo, org, targetBranch, outputBranch)
+      return this.createBranch(repo, org, sourceBranch, outputBranch)
     }
   }
 
-  private async createBranch(repo: string, org: string, targetBranch: string, outputBranch: string): Promise<string> {
+  private async createBranch(repo: string, org: string, sourceBranch: string, outputBranch: string): Promise<string> {
     let existingRefData;
     let newRefData;
 
@@ -89,12 +89,12 @@ export class GitClient {
       const { data } = await this.octokit.git.getRef({
         owner: org,
         repo,
-        ref: `heads/${targetBranch}`
+        ref: `heads/${sourceBranch}`
       })  
       existingRefData = data
     }
     catch(e) {
-      throw new HandledError(`target branch ${targetBranch} not found`, e)
+      throw new HandledError(`target branch ${sourceBranch} not found`, e)
     }
   
     try {

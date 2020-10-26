@@ -5,9 +5,9 @@ export class UpdateValidator {
   constructor(private readonly paramBuilder: UpdateParamsBuilder) {}
 
   validate(args: UpdateArgs): boolean | string {
-    const { path, repo, org, targets, outputPath, targetBranch, outputBranch, message } = this.paramBuilder.build(args)
+    const { sourcePath, repo, org, targets, outputPath, sourceBranch, outputBranch, message } = this.paramBuilder.build(args)
 
-    if(!path) {
+    if(!sourcePath) {
       return 'Please provide a target file path'
     }
     if(!message) {
@@ -25,7 +25,7 @@ export class UpdateValidator {
     if(!outputPath) {
       return 'Please provide an output path'
     }
-    if(!targetBranch) {
+    if(!sourceBranch) {
       return 'Please provide an target branch'
     }
     if(!outputBranch) {

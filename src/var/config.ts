@@ -1,12 +1,12 @@
 export interface Config {
-  target?: string;
-  path?: string;
+  targetValuePath?: string;
+  sourcePath?: string;
   value?: string;
   repo?: string;
   outputPath?: string;
   org?: string;
   githubAccessToken: string;
-  targetBranch?: string;
+  sourceBranch?: string;
   commitMessage?: string;
   outputBranch?: string;
   pr?: boolean
@@ -14,7 +14,7 @@ export interface Config {
 
 export class ConfigHolder {
   constructor(private readonly config: Config​​) {
-    this.config.targetBranch = config.targetBranch ?? 'main'
+    this.config.sourceBranch = config.sourceBranch ?? 'main'
     this.config.outputBranch = config.outputBranch ?? 'main'
     this.config.pr = config.pr ?? false
   }

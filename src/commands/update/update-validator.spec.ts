@@ -11,7 +11,7 @@ describe('update command validator', () => {
       [makeArgs({ path: '' }), 'path'],
       [makeArgs({ repo: '' }), 'repo'],
       [makeArgs({ outputBranch: '' }), 'outputBranch'],
-      [makeArgs({ targetBranch: '' }), 'targetBranch'],
+      [makeArgs({ sourceBranch: '' }), 'sourceBranch'],
       [makeArgs({ outputPath: '' }), 'outputPath'],
       [makeArgs({ set: '' }), 'set'],
     ]
@@ -36,7 +36,7 @@ function makeArgs({
   org = 'org',
   repo = 'repo',
   outputPath = 'outputPath',
-  targetBranch = 'targetBranch',
+  sourceBranch = 'sourceBranch',
   outputBranch = 'outputBranch',
   message = 'message',
   set = '[bla]=yo',
@@ -49,7 +49,7 @@ function makeArgs({
     org,
     outputBranch,
     outputPath,
-    targetBranch,
+    sourceBranch,
     message,
     set
   }
