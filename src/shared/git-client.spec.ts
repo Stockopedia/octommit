@@ -1,5 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { GitClient } from './git-client';
+import { EventEmitter } from 'events';
+import { HandledError } from './handled-error';
 
 describe('git client', () => {
   const testFile = `
@@ -12,140 +14,330 @@ describe('git client', () => {
   const testTargetBranch = 'main';
   const testOutputBranch = 'main';
   const testMessage = 'test message';
+  const existingFileSha = "test existing file sha"
 
   describe('the get file method', () => {
-    const octokit = mockOctokit({
-      repos: {
-        getContent: jest.fn(() => ({
-          data: {
-            content: Buffer.from(testFile).toString('base64')
-          }
-        }))
-      }
-    })
-    const client = new GitClient(octokit)
+    const eventEmitter = new EventEmitter()
 
-    it('should get a file from github', async () => {
-      const result = await client.getFile(pathToFile, testRepoName, testOrgName);
-
-      expect(octokit.repos.getContent).toHaveBeenCalledWith({
-        owner: testOrgName,
-        repo: testRepoName,
-        path: pathToFile
+    describe('given successful api response', () => {
+      const octokit = mockOctokit({
+        repos: {
+          getContent: jest.fn(() => ({
+            data: {
+              content: Buffer.from(testFile).toString('base64'),
+              sha: "testSha"
+            }
+          }))
+        }
       })
-      expect(result).toEqual(testFile)
+      const client = new GitClient(octokit, eventEmitter)
+  
+      it('should get a file from github', async () => {
+        const { data, sha } = await client.getFile(pathToFile, testRepoName, testOrgName);
+  
+        expect(octokit.repos.getContent).toHaveBeenCalledWith({
+          owner: testOrgName,
+          repo: testRepoName,
+          path: pathToFile
+        })
+        expect(data).toEqual(testFile)
+        expect(sha).toEqual("testSha")
+      })
+    })
+
+    describe('when api errors', () => {
+      const octokit = mockOctokit({
+        repos: {
+          getContent: jest.fn(() => {
+            throw new Error()
+          })
+        }
+      })
+      const client = new GitClient(octokit, eventEmitter)
+  
+      it('should get a file from github', async () => {
+        await expect(client.getFile(pathToFile, testRepoName, testOrgName)).rejects.toThrowError(HandledError)
+      })
     })
   })
   describe('the putFile method', () => {
-    const octokit = mockOctokit({
-      git: {
-        createBlob: jest.fn(() => ({
-          data: {
-            sha: 'blobSha'
-          }
-        })),
-        getCommit: jest.fn(() => ({
-          data: {
-            sha: 'existingCommitSha',
-            tree: {
-              sha: 'exitingCommitTreeSha'
+    describe('given the same target and output branch', () => {
+      const octokit = mockOctokit({
+        git: {
+          getRef: jest.fn(() => ({
+            data: {
+              object: {
+                sha: 'refSha'
+              }
             }
-          }
-        })),
-        createTree: jest.fn(() => ({
-          data : {
-            sha: 'newTreeSha'
-          }
-        })),
-        createCommit: jest.fn(() => ({
-          data: {
-            sha: 'newCommitSha'
-          }
-        })),
-        updateRef: jest.fn(() => ({
-          data: {
-            url: 'output_utl'
-          }
-        })),
-        getRef: jest.fn(() => ({
-          data: {
-            object: {
-              sha: 'refSha'
+          })),
+          createRef: jest.fn(() =>  ({
+            data: {
+              object: {
+                sha: 'newRefSha'
+              }
             }
-          }
-        })),
-        createRef: jest.fn(() =>  ({
-          data: {
-            object: {
-              sha: 'newRefSha'
-            }
-          }
-        }))
-      }
-    })
-    const client = new GitClient(octokit)
-
-    describe('given a the same target and output branch', () => {
+          }))
+        },
+        repos: {
+          createOrUpdateFileContents: jest.fn(() => ({
+            url: "resulting.url"
+          }))
+        }
+      })
+      const eventEmitter = new EventEmitter()
+      const client = new GitClient(octokit, eventEmitter)
       beforeAll(async () => {
-        await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, testOutputBranch, pathToFile, testMessage)
+        await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, testOutputBranch, pathToFile, testMessage, existingFileSha)
       })
   
-      it('should use correct base branch', () => {
-        expect(octokit.git.getRef).toHaveBeenCalledWith({
-          owner: testOrgName,
-          repo: testRepoName,
-          ref: `refs/heads/${testTargetBranch}`
-        })
+      it('should not attempt to get ref', () => {
+        expect(octokit.git.getRef).toHaveBeenCalledTimes(0)
       })
       it('should not create new branch', () => {
         expect(octokit.git.createRef).toHaveBeenCalledTimes(0)
       })
-      it('should create a new commit in the target branch', () => {
-        expect(octokit.git.createCommit).toHaveBeenCalledWith({
-          owner: testOrgName,
-          repo: testRepoName,
-          message: testMessage,
-          tree: 'newTreeSha',
-          parents: ['existingCommitSha']
-        })
-      })
       it('should return url of the new blob', () => {
-        expect(octokit.git.updateRef).toHaveBeenCalledWith({
+        expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledWith({
           owner: testOrgName,
+          message: testMessage,
+          content: Buffer.from(testFile).toString('base64'),
           repo: testRepoName,
-          ref: `refs/heads/${testOutputBranch}`,
-          sha: 'newCommitSha',
-        })  
+          path: pathToFile,
+          branch: testOutputBranch,
+          sha: existingFileSha,
+        })
       })
     })
-    describe('given a new target branch', () => {
-      beforeAll(async () => {
-        await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage)
-      })
-      it('should create new branch', () => {
-        expect(octokit.git.createRef).toHaveBeenCalledWith({
-          owner: testOrgName,
-          repo: testRepoName,
-          ref: `refs/heads/different_output_branch`,
-          sha: 'refSha'
+    describe('given a different target branch that already exists', () => {
+      const eventEmitter = new EventEmitter()
+
+      describe('when successfully getting branch ref', ()=> {
+        const octokit = mockOctokit({
+          git: {
+            getRef: jest.fn(() => ({ data: {
+              ref: "baseBranchRef"
+            }})),
+            createRef: jest.fn(() =>  ({
+              data: {
+                object: {
+                  sha: 'newRefSha'
+                }
+              }
+            }))
+          },
+          repos: {
+            createOrUpdateFileContents: jest.fn(() => ({
+              url: "resulting.url"
+            }))
+          }
+        })
+        const client = new GitClient(octokit, eventEmitter)
+        const mockLogListener = jest.fn()
+  
+        beforeAll(async () => {
+          eventEmitter.on('log', mockLogListener)
+          await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
+        })
+        it('should use existing branch', () => {
+          expect(octokit.git.getRef).toHaveBeenCalledTimes(1)
+          expect(octokit.git.createRef).toHaveBeenCalledTimes(0)
+        })
+        it('should return url of the new blob', () => {
+          expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledWith({
+            owner: testOrgName,
+            message: testMessage,
+            content: Buffer.from(testFile).toString('base64'),
+            repo: testRepoName,
+            path: pathToFile,
+            branch: "baseBranchRef",
+            sha: existingFileSha,
+          })
+        })
+        it('should emit log message', () => {
+          expect(mockLogListener).toHaveBeenCalledTimes(1)
         })
       })
-      it('should create a new commit in the target branch', () => {
-        expect(octokit.git.createCommit).toHaveBeenCalledWith({
-          owner: testOrgName,
-          repo: testRepoName,
-          message: testMessage,
-          tree: 'newTreeSha',
-          parents: ['existingCommitSha']
+      describe('when api errors', () => {
+        const octokit = mockOctokit({
+          git: {
+            getRef: jest.fn(() =>{
+              throw new Error()
+            }),
+          },
+          repos: {
+            createOrUpdateFileContents: jest.fn(() => ({
+              url: "resulting.url"
+            }))
+          }
+        })
+        const eventEmitter = new EventEmitter()
+        const client = new GitClient(octokit, eventEmitter)
+
+        it('should throw handled exception', async () => {
+          await expect(client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+            .rejects
+            .toThrowError(HandledError)
         })
       })
-      it('should return url of the new blob', () => {
-        expect(octokit.git.updateRef).toHaveBeenCalledWith({
-          owner: testOrgName,
-          repo: testRepoName,
-          ref: `refs/heads/${testOutputBranch}`,
-          sha: 'newCommitSha',
-        })  
+    })
+    describe('given new branch', () => {
+      const eventEmitter = new EventEmitter()
+
+      describe('when successfully creating branch', () => {
+        const octokit = mockOctokit({
+          git: {
+            getRef: jest.fn(({ref}) => {
+              if(ref === `heads/different_output_branch`) {
+                throw new Error()
+              }
+              else {
+                return {
+                  data: {
+                    ref: "baseBranchRef",
+                    object: {
+                      sha: "baseRefSha"
+                    }
+                  }
+                }
+              }
+            }),
+            createRef: jest.fn(() =>  ({
+              data: {
+                ref: "newBranchRef"
+              }
+            }))
+          },
+          repos: {
+            createOrUpdateFileContents: jest.fn(() => ({
+              url: "resulting.url"
+            }))
+          }
+        })
+        const client = new GitClient(octokit, eventEmitter)
+        const mockLogListener = jest.fn()
+  
+        beforeAll(async () => {
+          eventEmitter.on('log', mockLogListener)
+          await client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
+        })
+  
+        it('should create a new branch', () => {
+          expect(octokit.git.getRef).toHaveBeenCalledTimes(2)
+        
+          expect(octokit.git.createRef).toHaveBeenCalledWith({
+            owner: testOrgName,
+            repo: testRepoName,
+            ref: `refs/heads/different_output_branch`,
+            sha: 'baseRefSha'
+          })
+        })
+        it('should return url of the new blob', () => {
+          expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledWith({
+            owner: testOrgName,
+            message: testMessage,
+            content: Buffer.from(testFile).toString('base64'),
+            repo: testRepoName,
+            path: pathToFile,
+            branch: "newBranchRef",
+            sha: existingFileSha,
+          })
+        })
+        it('should emit log message', () => {
+          expect(mockLogListener).toHaveBeenCalledTimes(1)
+        })
+      })
+      describe('when unable to create a new branch', () => {
+        const octokit = mockOctokit({
+          git: {
+            getRef: jest.fn(({ref}) => {
+              if(ref === `heads/different_output_branch`) {
+                throw new Error()
+              }
+              else {
+                return {
+                  data: {
+                    ref: "baseBranchRef",
+                    object: {
+                      sha: "baseRefSha"
+                    }
+                  }
+                }
+              }
+            }),
+            createRef: jest.fn(() =>  {
+              throw new Error();
+            })
+          }
+        })
+        const client = new GitClient(octokit, eventEmitter)
+
+        it('should thorw handled error', async () => {
+          await expect(client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+            .rejects
+            .toThrowError(HandledError)
+        })
+      })
+    })
+    describe('given api error throw while PUTting file', () => {
+      const octokit = mockOctokit({
+        git: {
+          getRef: jest.fn(() => {
+            return {
+              data: {
+                ref: "baseBranchRef",
+              }
+            }
+          }),
+        },
+        repos: {
+          createOrUpdateFileContents: jest.fn(() => {
+            throw new Error();
+          })
+        }
+      })
+      const eventEmitter = new EventEmitter()
+      const client = new GitClient(octokit, eventEmitter)
+
+      it('should throw a handled expection', async () => {
+        await expect(client.putFile(testFile, testRepoName, testOrgName, testTargetBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+          .rejects
+          .toThrowError(HandledError)
+      })
+    })
+  })
+  describe('the createPullRequest method', () => {
+    const eventEmitter = new EventEmitter()
+
+    describe('given succesfull api response', () => {
+      const octokit = mockOctokit({
+        pulls: {
+          create: jest.fn(() => ({
+            data: {
+              url: "test.url"
+            }
+          }))
+        }
+      })
+      const client = new GitClient(octokit, eventEmitter)
+  
+      it('should return pull request url', async () => {
+        const result = await client.createPullRequest(testOutputBranch, testRepoName, "pr title", testTargetBranch, testOutputBranch);
+
+        expect(result).toBe("test.url")
+      })
+    })
+    describe('given api error', () => {
+      const octokit = mockOctokit({
+        pulls: () => {
+          throw new Error();
+        }
+      })
+      const client = new GitClient(octokit, eventEmitter)
+      it('should throw handled error', async () => {
+        await expect(client.createPullRequest(testOutputBranch, testRepoName, "pr title", testTargetBranch, testOutputBranch))
+          .rejects
+          .toThrowError(HandledError)
       })
     })
   })

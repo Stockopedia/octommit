@@ -3,7 +3,8 @@ import { UpdateParamsBuilder, UpdateCommand, UpdateValidator } from './commands'
 import { Orchestrator } from './orchestrator';
 import { GitClient, YamlStringBuilder } from './shared';
 import { Octokit } from '@octokit/rest';
-import { ConfigHolder, Config, GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, PATH, TARGET, OUTPUT_BRANCH, TARGET_BRANCH } from './var';
+import { ConfigHolder, Config, CREATE_PR, GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, PATH, TARGET, COMMIT_MESSAGE, OUTPUT_BRANCH, TARGET_BRANCH } from './var';
+import { EventEmitter } from "events";
 
 enum Symbols {
   Config = 'config'
@@ -19,8 +20,14 @@ container.register<Config>(Symbols.Config, {
     org: ORG,
     githubAccessToken: GITHUB_ACCESS_TOKEN,
     targetBranch: TARGET_BRANCH,
-    outputBranch: OUTPUT_BRANCH
+    outputBranch: OUTPUT_BRANCH,
+    commitMessage: COMMIT_MESSAGE,
+    pr: CREATE_PR
   }).get()
+})
+
+container​​.register<EventEmitter>(EventEmitter, {
+  useValue: new EventEmitter()
 })
 
 container​​.register<UpdateParamsBuilder>(UpdateParamsBuilder, {
@@ -37,7 +44,7 @@ container​​.register<UpdateCommand>(UpdateCommand, {
 
 container.register<Orchestrator>(Orchestrator, {
   useFactory: instanceCachingFactory(
-    (c) => new Orchestrator(c.resolve(UpdateCommand), c.resolve(UpdateValidator))
+    (c) => new Orchestrator(c.resolve(UpdateCommand), c.resolve(UpdateValidator), c.resolve(EventEmitter))
   ),
 });
 
@@ -51,7 +58,7 @@ container.register<Octokit>(Octokit, {
 
 container.register<GitClient>(GitClient, {
   useFactory: instanceCachingFactory(
-    (c) => new GitClient(c.resolve(Octokit))
+    (c) => new GitClient(c.resolve(Octokit), c.resolve(EventEmitter))
   ),
 })
 

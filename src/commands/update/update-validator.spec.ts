@@ -39,10 +39,12 @@ function makeArgs({
   targetBranch = 'targetBranch',
   outputBranch = 'outputBranch',
   message = 'message',
-  set = '[bla]=yo'
+  set = '[bla]=yo',
+  pr = true
 } = {}): UpdateArgs {
   return {
     path,
+    pr,
     repo,
     org,
     outputBranch,

@@ -12,18 +12,17 @@ describe('update params builder', () => {
       outputBranch: '',
       message: '',
       org: '',
-      repo: ''
+      repo: '',
+      pr: undefined
     }))
 
-    args.targets.forEach(target => {
-      expect(target.path).toContain('config')
-      expect(target.value).toContain('config')
-    })
-    Object.values(args).forEach(value => {
-      if(!Array.isArray(value)) {
-        expect(value).toContain('config')
-      }
-    })
+    expect(args.message).toContain('config')
+    expect(args.path).toContain('config')
+    expect(args.outputBranch).toContain('config')
+    expect(args.outputPath).toContain('config')
+    expect(args.targetBranch).toContain('config')
+    expect(args.org).toContain('config')
+    expect(args.repo).toContain('config')
   })
   describe('when value comes from cli options', () => {
     it('cli option should take precedence', () => {
@@ -45,12 +44,14 @@ function makeConfig({
   org = 'config_org',
   targetBranch = 'config_targetBranch',
   outputBranch = 'config_outputBranch',
-  commitMessage = 'config_commit'
+  commitMessage = 'config_commit',
+  pr = false
 } = {}): Config {
   return {
     target,
     path,
     value,
+    pr,
     repo,
     outputPath,
     org,
@@ -69,7 +70,8 @@ function makeArgs({
   targetBranch = 'targetBranch',
   outputBranch = 'outputBranch',
   message = 'mesage',
-  set = '[bla]=yo'
+  set = '[bla]=yo',
+  pr = true
 } = {}): UpdateArgs {
   return {
     path,
@@ -79,6 +81,7 @@ function makeArgs({
     outputBranch,
     outputPath,
     targetBranch,
-    set
+    set,
+    pr
   }
 }

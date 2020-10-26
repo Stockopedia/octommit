@@ -15,6 +15,7 @@ export class UpdateParamsBuilder {
     const targetBranch = args.targetBranch ? args.targetBranch : this.config.targetBranch!
     const outputBranch = args.outputBranch ? args.outputBranch : this.config.outputBranch!
     const message = args.message ? args.message : this.config.commitMessage!
+    const pr = args.pr ? args.pr : this.config.pr!
 
     return {
       path,
@@ -24,7 +25,8 @@ export class UpdateParamsBuilder {
       outputBranch,
       targetBranch,
       outputPath,
-      message
+      message,
+      pr
     }
   }
 

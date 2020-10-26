@@ -1,84 +1,118 @@
 import { Octokit } from '@octokit/rest';
+import { EventEmitter } from 'events'
+import { LogEvent, LogType } from './log-event';
+import { HandledError } from './handled-error';
 
 export class GitClient { 
-  constructor(private readonly octokit: Octokit) {
+  constructor(private readonly octokit: Octokit, private readonly eventEmitter: EventEmitter) {
 
   }
 
-  async getFile(path: string, repo: string, org: string): Promise<string> {
-    const { data } = await this.octokit.repos.getContent({
-      owner: org,
-      repo,
-      path
-    })
-    return Buffer.from(data.content, 'base64').toString()
+  async getFile(path: string, repo: string, org: string): Promise<{ data: string, sha: string}> {
+    try {
+      const { data } = await this.octokit.repos.getContent({
+        owner: org,
+        repo,
+        path
+      })
+      
+      return { data : Buffer.from(data.content, 'base64').toString(), sha: data.sha }
+    }
+    catch(e) {
+      throw new HandledError(`uanble to get file at: ${path}`, e)
+    }
   }
 
-  async putFile(data: string, repo: string, org: string, targetBranch: string, outputBranch: string, outputPath: string, message: string): Promise<string> {
+  async putFile(data: string, repo: string, org: string, targetBranch: string, outputBranch: string, outputPath: string, message: string, sha: string): Promise<string> {
     const branchRef = await this.getBranchRef(repo, org, targetBranch, outputBranch);
 
-    const { data: blobData } = await this.octokit.git.createBlob({
-      owner: org,
-      repo,
-      content: data,
-      encoding: 'utf-8',
-    })
-
-    const { data: currentCommitData } = await this.octokit.git.getCommit({
-      owner: org,
-      repo,
-      commit_sha: branchRef,
-    })
-
-    const { data: treeData } = await this.octokit.git.createTree({
-      owner: org,
-      repo,
-      tree:[{
+    try {
+      const result = await this.octokit.repos.createOrUpdateFileContents({
+        message,
+        content: Buffer.from(data).toString('base64'),
+        owner: org,
+        repo,
         path: outputPath,
-        mode: `100644`,
-        type: `blob`,
-        sha: blobData.sha,
-      }],
-      base_tree: currentCommitData.tree.sha,
-    })
+        branch: branchRef,
+        sha
+      })
+      return result.url;  
+    }
+    catch(e) {
+      throw new HandledError(`unable to PUT file contents`, e)
+    }
+  }
 
-    const { data: newCommitData } = await this.octokit.git.createCommit({
-      owner: org,
-      repo,
-      message,
-      tree: treeData.sha,
-      parents: [currentCommitData.sha]
-    })
+  async createPullRequest(org: string, repo: string, title: string, targetBranch: string, outputBranch: string) {
+    try {
+      const { data } = await this.octokit.pulls.create({
+        owner: org,
+        repo,
+        title,
+        head: outputBranch,
+        base: targetBranch,
+      });
 
-    const { data: result } = await this.octokit.git.updateRef({
-      owner: org,
-      repo,
-      ref: `refs/heads/${outputBranch}`,
-      sha: newCommitData.sha,
-    })
-
-    return result.url
+      return data.url
+    }
+    catch(e) {
+      throw new HandledError(`unable to create PR for between branches: ${targetBranch} and ${outputBranch}`, e)
+    }
   }
 
   private async getBranchRef(repo: string, org: string, targetBranch: string, outputBranch: string) {
-    const { data: refData } = await this.octokit.git.getRef({
-      owner: org,
-      repo,
-      ref: `refs/heads/${targetBranch}`
-    })
-    const existingRefSha = refData.object.sha;
+    if(outputBranch === targetBranch) {
+      return targetBranch
+    }
 
-    if(outputBranch !== targetBranch) {
-      const { data: refData } = await this.octokit.git.createRef({
+    try {
+      const { data: existingRefData } = await this.octokit.git.getRef({
+        owner: org,
+        repo,
+        ref: `heads/${outputBranch}`
+      })
+
+      this.eventEmitter.emit('log', new LogEvent(LogType.info, `using existing branch: ${outputBranch}`))
+
+      return existingRefData.ref
+    }
+    catch(e) {
+      return this.createBranch(repo, org, targetBranch, outputBranch)
+    }
+  }
+
+  private async createBranch(repo: string, org: string, targetBranch: string, outputBranch: string): Promise<string> {
+    let existingRefData;
+    let newRefData;
+
+    try {
+      const { data } = await this.octokit.git.getRef({
+        owner: org,
+        repo,
+        ref: `heads/${targetBranch}`
+      })  
+      existingRefData = data
+    }
+    catch(e) {
+      throw new HandledError(`target branch ${targetBranch} not found`, e)
+    }
+  
+    try {
+      const { data } = await this.octokit.git.createRef({
         owner: org,
         repo,
         ref: `refs/heads/${outputBranch}`,
-        sha: existingRefSha
+        sha: existingRefData.object.sha
       })
-
-      return refData.object.sha
+      newRefData = data
+    }
+    catch(e) {
+      throw new HandledError(`unable to create branch ${outputBranch}`, e)
     }
 
-    return refData.object.sha
+    this.eventEmitter.emit('log', new LogEvent(LogType.info, `creating new branch: ${outputBranch}`))
+
+    return newRefData.ref
   }
 }
+

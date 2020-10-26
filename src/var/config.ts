@@ -9,12 +9,14 @@ export interface Config {
   targetBranch?: string;
   commitMessage?: string;
   outputBranch?: string;
+  pr?: boolean
 }
 
 export class ConfigHolder {
   constructor(private readonly config: Config​​) {
     this.config.targetBranch = config.targetBranch ?? 'main'
     this.config.outputBranch = config.outputBranch ?? 'main'
+    this.config.pr = config.pr ?? false
   }
 
   get() {

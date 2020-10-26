@@ -11,3 +11,5 @@ export const OUTPUT_PATH: string | undefined = process.env.OUTPUT_PATH
 export const PATH: string | undefined = process.env.FILE_PATH
 export const TARGET_BRANCH: string | undefined = process.env.TARGET_BRANCH
 export const OUTPUT_BRANCH: string | undefined = process.env.OUTPUT_BRANCH
+export const COMMIT_MESSAGE: string | undefined = process.env.MESSAGE
+export const CREATE_PR: boolean | undefined = Boolean(process.env.CREATE_PR)
