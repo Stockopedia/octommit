@@ -25,7 +25,7 @@ Used to update a yaml file in github
 #### Usage
 
 ```
-octommit update --set[path.to.var]=new_value --set[foo.bar]=yawn --o --pr --repo <reponame> --org Stockopedia --sourcePath path/to/file.yaml --outputPath /path/to/outputfile.yaml --sourceBranch main --outputBranch some-other-branch --message "commit message"
+octommit update --set[path:to:var]=new_value --set[foo:bar]=yawn --o --pr --repo <reponame> --org Stockopedia --sourcePath path/to/file.yaml --outputPath /path/to/outputfile.yaml --sourceBranch main --outputBranch some-other-branch --message "commit message"
 ```
 
 #### Options
@@ -35,7 +35,7 @@ octommit update --set[path.to.var]=new_value --set[foo.bar]=yawn --o --pr --repo
 | repo         | string   | The name of the github repository.                                                                   | `REPO=<name>`                                                                                                                           | `--repo <name>`                                               |
 | pr           | boolean  | Whether or not to open a PR. Will only do so if the target branch it different to the output branch. | `CREATE_PR=true`                                                                                                                        | `--pr`                                                        |
 | output       | boolean  | Whether or not to output the command response                                                        |                                                                                                                                         | `--o`                                                         |
-| set          | string[] | Key/value pairs to replace in the target file                                                        | `VALUE_PATH=path.to.var VALUE=some_value`                                                                                               | `--set [path.to.var]=replacement --set [other_var]=new_value` |
+| set          | string[] | Key/value pairs to replace in the target file                                                        | `VALUE_PATH=path:to:var VALUE=some_value`                                                                                               | `--set [path:to:var]=replacement --set [other_var]=new_value` |
 | org          | string   | Name of github organisation                                                                          | `ORG=Stockopedia`                                                                                                                       | `--org Stockopedia`                                           |
 | sourcePath   | string   | Path to yaml file                                                                                    | `SOURCE_FILE=path/to/file.yaml`                                                                                                         | `--sourcePath path/to/file.yaml`                              |
 | outputPath   | string   | The output path for the resulting yaml. Can be the same file, or a new file                          | `OUTPUT_PATH=path/to/output.yaml`                                                                                                       | `--outputPath path/to/output.yaml`                            |
