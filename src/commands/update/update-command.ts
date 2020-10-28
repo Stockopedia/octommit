@@ -22,7 +22,12 @@ export class UpdateCommand {
       pr,
     } = this.paramBuilder.build(args);
 
-    const { data: file, sha } = await this.gitClient.getFile(path, repo, org);
+    const { data: file, sha } = await this.gitClient.getFile(
+      path,
+      repo,
+      org,
+      sourceBranch,
+    );
     const builder = this.yamlStringBuilder.haystack(file);
 
     targets.forEach(({ path, value }) => {
@@ -35,6 +40,7 @@ export class UpdateCommand {
       org,
       sourceBranch,
       outputBranch,
+      path,
       outputPath,
       message,
       sha,

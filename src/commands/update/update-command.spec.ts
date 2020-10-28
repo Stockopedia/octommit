@@ -38,6 +38,7 @@ bar: yo2
         args.org,
         args.sourceBranch,
         args.outputBranch,
+        args.sourcePath,
         args.outputPath,
         args.message,
         "testSha",
