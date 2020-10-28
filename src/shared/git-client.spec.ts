@@ -11,10 +11,11 @@ describe('git client', () => {
   const testRepoName = 'some-repo';
   const pathToFile = 'path/to/file.yaml';
   const testOrgName = 'some_org';
-  const testsourceBranch = 'main';
+  const testSourceBranch = 'main';
   const testOutputBranch = 'main';
   const testMessage = 'test message';
   const existingFileSha = "test existing file sha"
+  const testBranchName = "test_branch"
 
   describe('the get file method', () => {
     const eventEmitter = new EventEmitter()
@@ -33,12 +34,13 @@ describe('git client', () => {
       const client = new GitClient(octokit, eventEmitter)
   
       it('should get a file from github', async () => {
-        const { data, sha } = await client.getFile(pathToFile, testRepoName, testOrgName);
+        const { data, sha } = await client.getFile(pathToFile, testRepoName, testOrgName, testBranchName);
   
         expect(octokit.repos.getContent).toHaveBeenCalledWith({
           owner: testOrgName,
           repo: testRepoName,
-          path: pathToFile
+          path: pathToFile,
+          ref: `heads/${testBranchName}`
         })
         expect(data).toEqual(testFile)
         expect(sha).toEqual("testSha")
@@ -56,7 +58,7 @@ describe('git client', () => {
       const client = new GitClient(octokit, eventEmitter)
   
       it('should get a file from github', async () => {
-        await expect(client.getFile(pathToFile, testRepoName, testOrgName)).rejects.toThrowError(HandledError)
+        await expect(client.getFile(pathToFile, testRepoName, testOrgName, testBranchName)).rejects.toThrowError(HandledError)
       })
     })
   })
@@ -88,7 +90,7 @@ describe('git client', () => {
       const eventEmitter = new EventEmitter()
       const client = new GitClient(octokit, eventEmitter)
       beforeAll(async () => {
-        await client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, testOutputBranch, pathToFile, testMessage, existingFileSha)
+        await client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, testOutputBranch, pathToFile, pathToFile, testMessage, existingFileSha)
       })
   
       it('should not attempt to get ref', () => {
@@ -137,7 +139,7 @@ describe('git client', () => {
   
         beforeAll(async () => {
           eventEmitter.on('log', mockLogListener)
-          await client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
+          await client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, pathToFile, testMessage, existingFileSha)
         })
         it('should use existing branch', () => {
           expect(octokit.git.getRef).toHaveBeenCalledTimes(1)
@@ -175,7 +177,7 @@ describe('git client', () => {
         const client = new GitClient(octokit, eventEmitter)
 
         it('should throw handled exception', async () => {
-          await expect(client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+          await expect(client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, pathToFile, testMessage, existingFileSha))
             .rejects
             .toThrowError(HandledError)
         })
@@ -219,7 +221,7 @@ describe('git client', () => {
   
         beforeAll(async () => {
           eventEmitter.on('log', mockLogListener)
-          await client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha)
+          await client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, pathToFile, testMessage, existingFileSha)
         })
   
         it('should create a new branch', () => {
@@ -273,9 +275,122 @@ describe('git client', () => {
         const client = new GitClient(octokit, eventEmitter)
 
         it('should thorw handled error', async () => {
-          await expect(client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+          await expect(client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, pathToFile, testMessage, existingFileSha))
             .rejects
             .toThrowError(HandledError)
+        })
+      })
+    })
+    describe('given new sourcePath and outputPath are different', () => {
+      const eventEmitter = new EventEmitter()
+
+      describe('when the output file file does not exist', () => {
+        const octokit = mockOctokit({
+          git: {
+            getRef: jest.fn(({ref}) => {
+              if(ref === `heads/different_output_branch`) {
+                throw new Error()
+              }
+              else {
+                return {
+                  data: {
+                    ref: "baseBranchRef",
+                    object: {
+                      sha: "baseRefSha"
+                    }
+                  }
+                }
+              }
+            }),
+            createRef: jest.fn(() =>  ({
+              data: {
+                ref: "newBranchRef"
+              }
+            }))
+          },
+          repos: {
+            createOrUpdateFileContents: jest.fn(() => ({
+              url: "resulting.url"
+            })),
+            getContent: () => {
+              throw new Error();
+            }
+          }
+        })
+        const client = new GitClient(octokit, eventEmitter)
+  
+        beforeAll(async () => {
+          await client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, 'some/other/path/file.yaml', testMessage, existingFileSha)
+        })
+  
+        it('should use source file sha when PUTting file', () => {
+          expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledTimes(1)
+        
+          expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledWith({
+            message: testMessage,
+            content: Buffer.from(testFile).toString('base64'),
+            owner: testOrgName,
+            repo: testRepoName,
+            path: "some/other/path/file.yaml",
+            branch: 'newBranchRef',
+            sha: existingFileSha
+          })
+        })
+      })
+      describe('when the output file already exists', () => {
+        const octokit = mockOctokit({
+          git: {
+            getRef: jest.fn(({ref}) => {
+              if(ref === `heads/different_output_branch`) {
+                throw new Error()
+              }
+              else {
+                return {
+                  data: {
+                    ref: "baseBranchRef",
+                    object: {
+                      sha: "baseRefSha"
+                    }
+                  }
+                }
+              }
+            }),
+            createRef: jest.fn(() =>  ({
+              data: {
+                ref: "newBranchRef"
+              }
+            }))
+          },
+          repos: {
+            createOrUpdateFileContents: jest.fn(() => ({
+              url: "resulting.url"
+            })),
+            getContent: () => ({
+              data: {
+                content: Buffer.from(testFile).toString(`base64`),
+                sha: `otherFileSha`
+              }
+            })
+          }
+        })
+        const client = new GitClient(octokit, eventEmitter)
+  
+        beforeAll(async () => {
+          await client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, 'some/other/path/file.yaml', testMessage, existingFileSha)
+        })
+
+        it('should use existing file sha when PUTting file', async () => {
+          expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledTimes(1)
+        
+          expect(octokit.repos.createOrUpdateFileContents).toHaveBeenCalledWith({
+            message: testMessage,
+            content: Buffer.from(testFile).toString('base64'),
+            owner: testOrgName,
+            repo: testRepoName,
+            path: "some/other/path/file.yaml",
+            branch: 'newBranchRef',
+            sha: 'otherFileSha'
+          })
         })
       })
     })
@@ -300,7 +415,7 @@ describe('git client', () => {
       const client = new GitClient(octokit, eventEmitter)
 
       it('should throw a handled expection', async () => {
-        await expect(client.putFile(testFile, testRepoName, testOrgName, testsourceBranch, 'different_output_branch', pathToFile, testMessage, existingFileSha))
+        await expect(client.putFile(testFile, testRepoName, testOrgName, testSourceBranch, 'different_output_branch', pathToFile, pathToFile, testMessage, existingFileSha))
           .rejects
           .toThrowError(HandledError)
       })
@@ -322,7 +437,7 @@ describe('git client', () => {
       const client = new GitClient(octokit, eventEmitter)
   
       it('should return pull request url', async () => {
-        const result = await client.createPullRequest(testOutputBranch, testRepoName, "pr title", testsourceBranch, testOutputBranch);
+        const result = await client.createPullRequest(testOutputBranch, testRepoName, "pr title", testSourceBranch, testOutputBranch);
 
         expect(result).toBe("test.url")
       })
@@ -335,7 +450,7 @@ describe('git client', () => {
       })
       const client = new GitClient(octokit, eventEmitter)
       it('should throw handled error', async () => {
-        await expect(client.createPullRequest(testOutputBranch, testRepoName, "pr title", testsourceBranch, testOutputBranch))
+        await expect(client.createPullRequest(testOutputBranch, testRepoName, "pr title", testSourceBranch, testOutputBranch))
           .rejects
           .toThrowError(HandledError)
       })

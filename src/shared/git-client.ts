@@ -8,12 +8,13 @@ export class GitClient {
 
   }
 
-  async getFile(path: string, repo: string, org: string): Promise<{ data: string, sha: string}> {
+  async getFile(path: string, repo: string, org: string, branch: string): Promise<{ data: string, sha: string}> {
     try {
       const { data } = await this.octokit.repos.getContent({
         owner: org,
         repo,
-        path
+        path,
+        ref: `heads/${branch}`
       })
       
       return { data : Buffer.from(data.content, 'base64').toString(), sha: data.sha }
@@ -23,8 +24,9 @@ export class GitClient {
     }
   }
 
-  async putFile(data: string, repo: string, org: string, sourceBranch: string, outputBranch: string, outputPath: string, message: string, sha: string): Promise<string> {
+  async putFile(data: string, repo: string, org: string, sourceBranch: string, outputBranch: string, sourcePath: string, outputPath: string, message: string, sha: string): Promise<string> {
     const branchRef = await this.getBranchRef(repo, org, sourceBranch, outputBranch);
+    const sourceSha = await this.getExistingSha(repo, org, outputBranch, sourcePath, outputPath, sha);
 
     try {
       const result = await this.octokit.repos.createOrUpdateFileContents({
@@ -34,7 +36,7 @@ export class GitClient {
         repo,
         path: outputPath,
         branch: branchRef,
-        sha
+        sha: sourceSha
       })
       return result.url;  
     }
@@ -58,6 +60,19 @@ export class GitClient {
     catch(e) {
       throw new HandledError(`unable to create PR for between branches: ${sourceBranch} and ${outputBranch}`, e)
     }
+  }
+
+  private async getExistingSha(repo: string, org: string, outputBranch: string, sourcePath: string, outputPath: string, sha: string) {
+    if(outputPath !== sourcePath) {
+      try {
+        const { sha: existingSha } = await this.getFile(outputPath, repo, org, outputBranch)
+        return existingSha
+      }
+      catch(e) {
+        return sha
+      }
+    }
+    return sha
   }
 
   private async getBranchRef(repo: string, org: string, sourceBranch: string, outputBranch: string) {
