@@ -10,7 +10,7 @@ export class YamlStringBuilder {
   }
 
   setValue(path: string, value: string) {
-    this.file = set(this.file, path, value)
+    this.file = set(this.file, path.split(':'), value)
     return this;
   }
 
