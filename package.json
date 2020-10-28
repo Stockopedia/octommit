@@ -16,7 +16,6 @@
     "format": "prettier --write 'src/**/*ts'",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
-    "format:test": "prettier --write 'spec/**/*ts'",
     "make:badges": "node_modules/.bin/jest-badges-readme",
     "make:readme": "npm run test -- --coverage && npm run make:badges",
     "make:changelog": "changelog"

@@ -6,7 +6,7 @@ export interface UpdateArgs {
   sourceBranch: string;
   outputBranch: string;
   message: string;
-  pr: boolean
+  pr: boolean;
   set: string | string[];
 }
 
@@ -18,6 +18,6 @@ export interface UpdateParams {
   sourceBranch: string;
   outputBranch: string;
   message: string;
-  pr: boolean
-  targets: { path: string, value: string }[] 
+  pr: boolean;
+  targets: { path: string; value: string }[];
 }

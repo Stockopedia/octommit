@@ -1,13 +1,33 @@
-import { container, instanceCachingFactory } from "tsyringe";
-import { UpdateParamsBuilder, UpdateCommand, UpdateValidator } from './commands'
-import { Orchestrator } from './orchestrator';
-import { GitClient, YamlStringBuilder } from './shared';
-import { Octokit } from '@octokit/rest';
-import { ConfigHolder, Config, CREATE_PR, GITHUB_ACCESS_TOKEN, REPO, ORG, OUTPUT_PATH, VALUE, SOURCE_PATH, VALUE_PATH, COMMIT_MESSAGE, OUTPUT_BRANCH, SOURCE_BRANCH } from './var';
 import { EventEmitter } from "events";
 
+import { Octokit } from "@octokit/rest";
+import { container, instanceCachingFactory } from "tsyringe";
+
+import {
+  UpdateCommand,
+  UpdateParamsBuilder,
+  UpdateValidator,
+} from "./commands";
+import { Orchestrator } from "./orchestrator";
+import { GitClient, YamlStringBuilder } from "./shared";
+import {
+  COMMIT_MESSAGE,
+  CREATE_PR,
+  Config,
+  ConfigHolder,
+  GITHUB_ACCESS_TOKEN,
+  ORG,
+  OUTPUT_BRANCH,
+  OUTPUT_PATH,
+  REPO,
+  SOURCE_BRANCH,
+  SOURCE_PATH,
+  VALUE,
+  VALUE_PATH,
+} from "./var";
+
 enum Symbols {
-  Config = 'config'
+  Config = "config",
 }
 
 container.register<Config>(Symbols.Config, {
@@ -22,46 +42,54 @@ container.register<Config>(Symbols.Config, {
     sourceBranch: SOURCE_BRANCH,
     outputBranch: OUTPUT_BRANCH,
     commitMessage: COMMIT_MESSAGE,
-    pr: CREATE_PR
-  }).get()
-})
+    pr: CREATE_PR,
+  }).get(),
+});
 
-container​​.register<EventEmitter>(EventEmitter, {
-  useValue: new EventEmitter()
-})
+container.register<EventEmitter>(EventEmitter, {
+  useValue: new EventEmitter(),
+});
 
-container​​.register<UpdateParamsBuilder>(UpdateParamsBuilder, {
-  useFactory: (c) => new UpdateParamsBuilder(c.resolve(Symbols.Config))
-})
+container.register<UpdateParamsBuilder>(UpdateParamsBuilder, {
+  useFactory: (c) => new UpdateParamsBuilder(c.resolve(Symbols.Config)),
+});
 
-container​​.register<UpdateValidator>(UpdateValidator, {
-  useFactory: (c) => new UpdateValidator(c.resolve(UpdateParamsBuilder))
-})
+container.register<UpdateValidator>(UpdateValidator, {
+  useFactory: (c) => new UpdateValidator(c.resolve(UpdateParamsBuilder)),
+});
 
-container​​.register<UpdateCommand>(UpdateCommand, {
-  useFactory: (c) => new UpdateCommand(c.resolve(GitClient), c.resolve(YamlStringBuilder), c.resolve(UpdateParamsBuilder))
-})
+container.register<UpdateCommand>(UpdateCommand, {
+  useFactory: (c) =>
+    new UpdateCommand(
+      c.resolve(GitClient),
+      c.resolve(YamlStringBuilder),
+      c.resolve(UpdateParamsBuilder),
+    ),
+});
 
 container.register<Orchestrator>(Orchestrator, {
   useFactory: instanceCachingFactory(
-    (c) => new Orchestrator(c.resolve(UpdateCommand), c.resolve(UpdateValidator), c.resolve(EventEmitter))
+    (c) =>
+      new Orchestrator(
+        c.resolve(UpdateCommand),
+        c.resolve(UpdateValidator),
+        c.resolve(EventEmitter),
+      ),
   ),
 });
 
 container.register<YamlStringBuilder>(YamlStringBuilder, {
-  useClass: YamlStringBuilder
-})
+  useClass: YamlStringBuilder,
+});
 
 container.register<Octokit>(Octokit, {
-  useValue: new Octokit({ auth: GITHUB_ACCESS_TOKEN })
-})
+  useValue: new Octokit({ auth: GITHUB_ACCESS_TOKEN }),
+});
 
 container.register<GitClient>(GitClient, {
   useFactory: instanceCachingFactory(
-    (c) => new GitClient(c.resolve(Octokit), c.resolve(EventEmitter))
+    (c) => new GitClient(c.resolve(Octokit), c.resolve(EventEmitter)),
   ),
-})
+});
 
-export {
-  container
-}
+export { container };

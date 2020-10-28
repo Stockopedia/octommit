@@ -1,7 +1,7 @@
 export enum LogType {
   info,
-  error
+  error,
 }
-export class LogEvent { 
+export class LogEvent {
   constructor(readonly type: LogType, readonly message: string) {}
 }

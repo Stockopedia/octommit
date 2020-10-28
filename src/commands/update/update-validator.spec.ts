@@ -1,46 +1,44 @@
-import { UpdateParamsBuilder } from './update-params-builder';
-import { UpdateValidator } from './update-validator';
-import { UpdateArgs } from './update-args';
+import { UpdateArgs } from "./update-args";
+import { UpdateParamsBuilder } from "./update-params-builder";
+import { UpdateValidator } from "./update-validator";
 
-describe('update command validator', () => {
+describe("update command validator", () => {
+  const validator = new UpdateValidator(new UpdateParamsBuilder({} as any));
 
-  const validator = new UpdateValidator(new UpdateParamsBuilder({} as any))
-
-  describe('given invalid params', () => {
+  describe("given invalid params", () => {
     const fixtures = [
-      [makeArgs({ path: '' }), 'path'],
-      [makeArgs({ repo: '' }), 'repo'],
-      [makeArgs({ outputBranch: '' }), 'outputBranch'],
-      [makeArgs({ sourceBranch: '' }), 'sourceBranch'],
-      [makeArgs({ outputPath: '' }), 'outputPath'],
-      [makeArgs({ set: '' }), 'set'],
-    ]
+      [makeArgs({ path: "" }), "path"],
+      [makeArgs({ repo: "" }), "repo"],
+      [makeArgs({ outputBranch: "" }), "outputBranch"],
+      [makeArgs({ sourceBranch: "" }), "sourceBranch"],
+      [makeArgs({ outputPath: "" }), "outputPath"],
+      [makeArgs({ set: "" }), "set"],
+    ];
 
     fixtures.forEach(([fixture, param]) => {
       it(`should fail validation for param: ${param}`, () => {
-        expect(() => validator.validate(fixture as UpdateArgs)).toThrow()
-      })
+        expect(() => validator.validate(fixture as UpdateArgs)).toThrow();
+      });
     });
-  })
+  });
 
-  describe('given full set of args', () => {
-    it('should pass validation', () => {
-      expect(validator.validate(makeArgs())).toBeTruthy()
-    })
-  })
-  
-})
+  describe("given full set of args", () => {
+    it("should pass validation", () => {
+      expect(validator.validate(makeArgs())).toBeTruthy();
+    });
+  });
+});
 
 function makeArgs({
-  path = 'path',
-  org = 'org',
-  repo = 'repo',
-  outputPath = 'outputPath',
-  sourceBranch = 'sourceBranch',
-  outputBranch = 'outputBranch',
-  message = 'message',
-  set = '[bla]=yo',
-  pr = true
+  path = "path",
+  org = "org",
+  repo = "repo",
+  outputPath = "outputPath",
+  sourceBranch = "sourceBranch",
+  outputBranch = "outputBranch",
+  message = "message",
+  set = "[bla]=yo",
+  pr = true,
 } = {}): UpdateArgs {
   return {
     sourcePath: path,
@@ -51,6 +49,6 @@ function makeArgs({
     outputPath,
     sourceBranch,
     message,
-    set
-  }
+    set,
+  };
 }

@@ -1,5 +1,5 @@
-import * as YAML from 'yaml'
-import { set } from 'lodash'
+import { set } from "lodash";
+import * as YAML from "yaml";
 
 export class YamlStringBuilder {
   private file!: object;
@@ -10,7 +10,7 @@ export class YamlStringBuilder {
   }
 
   setValue(path: string, value: string) {
-    this.file = set(this.file, path.split(':'), value)
+    this.file = set(this.file, path.split(":"), value);
     return this;
   }
 
