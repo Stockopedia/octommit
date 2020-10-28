@@ -33,7 +33,16 @@ export class Orchestrator {
       .option('--org <org>', 'The github organisation')
       .option('--message <message>', 'The github commit message')
       .option('--o', 'Whether or not to output the resulting file')
-      .validate(args => updateValidator.validate(args.options as UpdateArgs))
+      .validate(args => {
+        try {
+          updateValidator.validate(args.options as UpdateArgs)
+          return true;
+        }
+        catch(e) {
+          this.vorpal.log(e.message);
+          process.exit(1)
+        }
+      })
       .action(async (args) => {
         try {
           const result = await updateCommand.action(args.options as UpdateArgs)

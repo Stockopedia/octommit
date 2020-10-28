@@ -18,7 +18,7 @@ describe('update command validator', () => {
 
     fixtures.forEach(([fixture, param]) => {
       it(`should fail validation for param: ${param}`, () => {
-        expect(validator.validate(fixture as UpdateArgs)).toContain('Please provide a')
+        expect(() => validator.validate(fixture as UpdateArgs)).toThrow()
       })
     });
   })
