@@ -17,7 +17,7 @@ describe('update params builder', () => {
     }))
 
     expect(args.message).toContain('config')
-    expect(args.path).toContain('config')
+    expect(args.sourcePath).toContain('config')
     expect(args.outputBranch).toContain('config')
     expect(args.outputPath).toContain('config')
     expect(args.sourceBranch).toContain('config')
@@ -48,8 +48,8 @@ function makeConfig({
   pr = false
 } = {}): Config {
   return {
-    target,
-    path,
+    targetValuePath: target,
+    sourcePath: path,
     value,
     pr,
     repo,
@@ -74,7 +74,7 @@ function makeArgs({
   pr = true
 } = {}): UpdateArgs {
   return {
-    path,
+    sourcePath: path,
     message,
     repo,
     org,

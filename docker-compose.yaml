@@ -1,7 +1,10 @@
 version: '3'
 services:
   console_app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    entrypoint: ["tail", "-f", "/dev/null"]
     env_file: .env
     volumes:
      - .:/usr/src/app

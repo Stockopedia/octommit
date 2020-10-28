@@ -8,7 +8,7 @@ export class UpdateCommand {
   }
 
   async action(args: UpdateArgs): Promise<string> {
-    const { repo, path, org, targets, sourceBranch, outputBranch, outputPath, message, pr } = this.paramBuilder.build(args);
+    const { repo, sourcePath: path, org, targets, sourceBranch, outputBranch, outputPath, message, pr } = this.paramBuilder.build(args);
 
     const { data: file, sha } = await this.gitClient.getFile(path, repo, org);
     const builder = this.yamlStringBuilder.haystack(file);

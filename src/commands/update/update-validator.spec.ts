@@ -43,7 +43,7 @@ function makeArgs({
   pr = true
 } = {}): UpdateArgs {
   return {
-    path,
+    sourcePath: path,
     pr,
     repo,
     org,
