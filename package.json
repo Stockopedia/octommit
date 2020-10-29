@@ -1,7 +1,7 @@
 {
   "name": "octommit",
   "description": "cli program to update files in git",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": {
     "name": "Stockopedia"
   },
