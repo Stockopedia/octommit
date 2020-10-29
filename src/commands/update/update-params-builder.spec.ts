@@ -38,9 +38,7 @@ describe("update params builder", () => {
 });
 
 function makeConfig({
-  target = "config_target",
   path = "config_path",
-  value = "config_value",
   repo = "config_repo",
   outputPath = "config_outputPath",
   org = "config_org",
@@ -50,9 +48,7 @@ function makeConfig({
   pr = false,
 } = {}): Config {
   return {
-    targetValuePath: target,
     sourcePath: path,
-    value,
     pr,
     repo,
     outputPath,
@@ -73,6 +69,7 @@ function makeArgs({
   outputBranch = "outputBranch",
   message = "mesage",
   set = "[bla]=yo",
+  remove = "[bla2]",
   pr = true,
 } = {}): UpdateArgs {
   return {
@@ -83,6 +80,7 @@ function makeArgs({
     outputBranch,
     outputPath,
     sourceBranch,
+    remove,
     set,
     pr,
   };

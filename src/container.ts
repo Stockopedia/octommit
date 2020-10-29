@@ -22,8 +22,6 @@ import {
   REPO,
   SOURCE_BRANCH,
   SOURCE_PATH,
-  VALUE,
-  VALUE_PATH,
 } from "./var";
 
 enum Symbols {
@@ -32,9 +30,7 @@ enum Symbols {
 
 container.register<Config>(Symbols.Config, {
   useValue: new ConfigHolder({
-    targetValuePath: VALUE_PATH,
     repo: REPO,
-    value: VALUE,
     sourcePath: SOURCE_PATH,
     outputPath: OUTPUT_PATH,
     org: ORG,

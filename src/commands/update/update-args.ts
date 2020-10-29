@@ -8,6 +8,7 @@ export interface UpdateArgs {
   message: string;
   pr: boolean;
   set: string | string[];
+  remove: string | string[];
 }
 
 export interface UpdateParams {
@@ -20,4 +21,5 @@ export interface UpdateParams {
   message: string;
   pr: boolean;
   targets: { path: string; value: string }[];
+  removeTargets: { path: string; value?: string }[];
 }

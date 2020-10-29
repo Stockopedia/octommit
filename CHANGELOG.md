@@ -1,3 +1,13 @@
+#### 1.0.8 (2020-10-29)
+
+##### Chores
+
+- remove npmrc ([a3f0dbe8](https://github.com/Stockopedia/octommit/commit/a3f0dbe89e9b545038e55627e9d3cae95e572894))
+
+##### New Features
+
+- **yaml output:** add support for removing properties, array items and pushing to arrays ([71a08f92](https://github.com/Stockopedia/octommit/commit/71a08f92fd9a2235c817cb71a7efa64b6c47df01))
+
 #### 1.0.5 (2020-10-28)
 
 ##### Chores

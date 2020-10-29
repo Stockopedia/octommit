@@ -36,6 +36,10 @@ export class Orchestrator {
         "--set [<path>]=<value>",
         "Path to target and the desired value e.g. image.tag=bla",
       )
+      .option(
+        "--remove [<path>]=<value>",
+        "Path to item that need to be removed e.g. image.tag",
+      )
       .option("--sourcePath <path>", "Path to file in repo")
       .option("--outputPath <path>", "Output path of file in repo")
       .option("--sourceBranch <sourceBranch>", "Target (base) branch")

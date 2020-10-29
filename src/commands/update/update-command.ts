@@ -15,6 +15,7 @@ export class UpdateCommand {
       sourcePath: path,
       org,
       targets,
+      removeTargets,
       sourceBranch,
       outputBranch,
       outputPath,
@@ -31,7 +32,16 @@ export class UpdateCommand {
     const builder = this.yamlStringBuilder.haystack(file);
 
     targets.forEach(({ path, value }) => {
+      if (path.slice(-2) === "[]") {
+        builder.pushValue(path.slice(-2), value);
+      }
       builder.setValue(path!, value!);
+    });
+    removeTargets.forEach(({ path, value }) => {
+      if (path.slice(-2) === "[]") {
+        builder.removeItem(path.slice(0, -2), value!);
+      }
+      builder.deleteValue(path!);
     });
 
     const result = await this.gitClient.putFile(

@@ -1,8 +1,28 @@
+import { isEqual } from "lodash";
+import * as YAML from "yaml";
+
 import { GitClient } from "../../shared/git-client";
 import { YamlStringBuilder } from "../../shared/yaml-string-builder";
 import { UpdateArgs } from "./update-args";
 import { UpdateCommand } from "./update-command";
 import { UpdateParamsBuilder } from "./update-params-builder";
+
+declare global {
+  namespace jest {
+    interface Expect {
+      toMatchYaml(expected: string): any;
+    }
+  }
+}
+
+expect.extend({
+  toMatchYaml(received, expected) {
+    return {
+      message: () => "yaml objects do not match",
+      pass: isEqual(YAML.parse(received), YAML.parse(expected)),
+    };
+  },
+});
 
 describe("update command", () => {
   describe("when updating yaml file", () => {
@@ -10,6 +30,10 @@ describe("update command", () => {
       getFile: jest.fn(() => ({
         data: `
           foo: test
+          baz: some_value
+          arr:
+            - yo
+            - other
         `,
         sha: "testSha",
       })),
@@ -18,6 +42,8 @@ describe("update command", () => {
     });
     const expectedFile = `foo: yo
 bar: yo2
+arr:
+ - other
 `;
     const args = makeArgs();
 
@@ -33,7 +59,7 @@ bar: yo2
       ).action(args);
 
       expect(gitClient.putFile).toHaveBeenCalledWith(
-        expectedFile,
+        expect.toMatchYaml(expectedFile),
         args.repo,
         args.org,
         args.sourceBranch,
@@ -83,6 +109,7 @@ function makeArgs({
   outputBranch = "outputBranch",
   message = "mesage",
   set = ["[foo]=yo", "[bar]=yo2"],
+  remove = ["[baz]", "[arr[]]=yo"],
   pr = true,
 } = {}): UpdateArgs {
   return {
@@ -94,6 +121,7 @@ function makeArgs({
     outputPath,
     sourceBranch,
     set,
+    remove,
     pr,
   };
 }

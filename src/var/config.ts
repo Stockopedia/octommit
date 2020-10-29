@@ -1,7 +1,5 @@
 export interface Config {
-  targetValuePath?: string;
   sourcePath?: string;
-  value?: string;
   repo?: string;
   outputPath?: string;
   org?: string;
