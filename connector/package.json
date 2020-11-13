@@ -1,0 +1,64 @@
+{
+  "name": "octommit-connector",
+  "description": "octommit connector to update files in git",
+  "version": "1.0.0",
+  "author": {
+    "name": "Stockopedia"
+  },
+  "repository": {
+    "url": "https://github.com/Stockopedia/octommit/connector"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "source": "src/index.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc -p src",
+    "format": "prettier --write 'src/**/*ts'",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint:test": "tslint -c tslint.json 'spec/**/*.ts'",
+    "make:badges": "node_modules/.bin/jest-badges-readme",
+    "make:readme": "npm run test -- --coverage && npm run make:badges",
+    "make:changelog": "changelog"
+  },
+  "dependencies": {
+    "@octokit/auth-token": "^2.4.2",
+    "@octokit/core": "^3.1.3",
+    "@octokit/rest": "^18.0.6",
+    "@types/lodash": "^4.14.162",
+    "body-parser": "^1.19.0",
+    "chalk": "^4.1.0",
+    "events": "^3.2.0",
+    "lodash": "^4.17.20",
+    "ncp": "^2.0.0",
+    "node-schedule": "^1.3.2",
+    "tslint-config-prettier": "^1.18.0",
+    "yaml": "^1.10.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@octokit/types": "^5.5.0",
+    "@olavoparno/jest-badges-readme": "^1.5.1",
+    "@stryker-mutator/core": "^4.0.0",
+    "@stryker-mutator/jest-runner": "^4.0.0",
+    "@types/jest": "^22.2.3",
+    "@types/node": "^14.0.27",
+    "generate-changelog": "^1.8.0",
+    "husky": "^4.3.0",
+    "import-sort-style-module": "^6.0.0",
+    "jest": "^26.6.0",
+    "lint-staged": "^10.4.0",
+    "prettier": "^2.1.2",
+    "prettier-plugin-import-sort": "0.0.6",
+    "ts-jest": "^26.4.1",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.0.3"
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
+    }
+  }
+}
