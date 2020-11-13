@@ -1,0 +1,5 @@
+commitlint.*
+jest.config.js
+stryker.conf.js
+tsconfig.json
+tslint.json
