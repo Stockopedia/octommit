@@ -48,7 +48,7 @@ spec:
             value: octommit
           - name: script
             value: |
-              npm install
+              npx lerna bootstrap
               lerna run build
     - - name: test
         templateRef:

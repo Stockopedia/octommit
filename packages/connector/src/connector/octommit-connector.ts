@@ -87,8 +87,8 @@ class OutputPath {
 
 class Command {
   constructor(private readonly options: UpdateArgs) {
-    this.options.set = this.options.set ?? [];
-    this.options.remove = this.options.remove ?? [];
+    this.options.set = this.options.set ? this.options.set : [];
+    this.options.remove = this.options.remove ? this.options.remove : [];
   }
 
   set(path: string, value: string) {

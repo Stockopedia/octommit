@@ -1,0 +1,20 @@
+46 error Error: Command failed: git commit -F /private/var/folders/rn/5tv9x4qs23qcknynjmjp13d80000gn/T/3c1c76e1-9d35-4bbf-a9ab-55e9e510da70/lerna-commit.txt
+46 error husky > pre-commit (node v14.4.0)
+46 error ℹ No staged files match any configured task.
+46 error husky > commit-msg (node v14.4.0)
+46 error ⧗   input: Publish
+46 error
+46 error  - octommit@1.0.13
+46 error  - octommit-connector@1.0.4
+46 error  - octommit-core@1.0.13
+46 error ✖   subject may not be empty [subject-empty]
+46 error ✖   type may not be empty [type-empty]
+46 error
+46 error ✖   found 2 problems, 0 warnings
+46 error ⓘ   Get help: https://github.com/conventional-changelog/commitlint/#what-is-commitlint
+46 error
+46 error husky > commit-msg hook failed (add --no-verify to bypass)
+46 error
+46 error     at makeError (/usr/local/lib/node_modules/lerna/node_modules/execa/index.js:174:9)
+46 error     at /usr/local/lib/node_modules/lerna/node_modules/execa/index.js:278:16
+46 error     at processTicksAndRejections (internal/process/task_queues.js:97:5)
