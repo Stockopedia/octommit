@@ -1,5 +1,5 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Workflow
+kind: WorkflowTemplate
 metadata:
   name: octommit-publish
   namespace: argo
@@ -76,10 +76,7 @@ spec:
               value: "core"
             - name: version
               value: "{{steps.get-tag.outputs.parameters.tag}}"
-        withItems: 
-          - core
-          - connector
-          - cli
+        when: "{{steps.get-tag.outputs.result}} == true"
     - - name: publish-packages
         template: publish
         arguments:
