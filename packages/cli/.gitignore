@@ -1,0 +1,10 @@
+dist
+node_modules
+.env
+.idea
+coverage
+# stryker temp files
+.stryker-tmp
+reports
+#jest
+globalConfig.json
