@@ -7,9 +7,9 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "ES2020",
+    "target": "es2018",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2020", "dom"]
+    "lib": ["es2018", "dom"]
   },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "**/*.spec.ts", "src/__tests__"]
