@@ -1,9 +1,5 @@
 # Octommit
 
-| Statements                                                                                      | Branches                                                                                   | Functions                                                                                    | Lines                                                                                      |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| ![Statements](https://img.shields.io/badge/Coverage-97.71%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-94%25-brightgreen.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-97.64%25-brightgreen.svg "Make me better!") |
-
 ## Env
 
 `GITHUB_TOKEN` is the only **required** env var. This is the `personal access token` for a github user/bot

@@ -1,0 +1,134 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: octommit-publish
+  namespace: argo
+  generateName: octommit-publish-
+spec:
+  imagePullSecrets:
+    - name: dockerhub
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  securityContext:
+    fsGroup: 2000 
+  serviceAccountName: argo
+  volumeClaimTemplates:
+    - metadata:
+        name: workdir
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi    
+  arguments:
+    parameters:
+      - name: branch
+        value: main
+  entrypoint: octommit-build
+  templates:
+  - name: octommit-build
+    steps:
+    - - name: checkout
+        templateRef:
+          name: git
+          template: checkout
+        arguments:
+          parameters:
+          - name: branch
+            value: "{{workflow.parameters.branch}}"
+          - name: repository
+            value: "octommit"
+    - - name: build
+        templateRef:
+          name: npm
+          template: run
+        arguments:
+          parameters:
+          - name: repository
+            value: octommit
+          - name: script
+            value: |
+              npm install
+              lerna run build
+    - - name: test
+        templateRef:
+          name: npm
+          template: run
+        arguments:
+          parameters:
+          - name: repository
+            value: octommit
+          - name: script
+            value: |-
+              lerna run test -- --coverage;
+    - - name: semver
+        templateRef:
+          name: semantic-version
+          template: version
+        arguments:
+          parameters:
+          - name: repository
+            value: octommit
+          - name: branches
+            value: "--branches main"
+    - - name: get-tag
+        templateRef:
+          name: git
+          template: get-tag
+        arguments:
+          parameters:
+          - name: repository
+            value: octommit
+      - name: update-read~me
+        template: update-readme
+    - - name: docker-build-and-push
+        templateRef:
+          name: docker
+          template: build-and-push
+        arguments:
+          parameters:
+          - name: repository
+            value: octommit
+          - name: tag
+            value: "{{steps.get-tag.outputs.parameters.tag}}"
+          - name: buildArgs
+            value: "--build-arg NPM_TOKEN=$(NPM_TOKEN)"
+        when: "{{steps.get-tag.outputs.result}} == true"
+
+  - name: update-readme
+    steps:
+      - - name: git-sync
+          templateRef:
+            name: git
+            template: run
+          arguments:
+            parameters:
+              - name: repository
+                value: octommit
+              - name: script
+                value: |-
+                  git pull
+      - - name: update-readme
+          templateRef:
+            name: npm
+            template: run
+          arguments:
+            parameters:
+            - name: repository
+              value: octommit
+            - name: script
+              value: |-
+                lerna run make:badges
+      - - name: commit-readme
+          templateRef:
+            name: git
+            template: run
+          arguments:
+            parameters:
+              - name: repository
+                value: octommit
+              - name: script
+                value: |-
+                  git add README.md;
+                  git commit -m "docs(ci): update readme [skip ci]";
+                  git push
