@@ -49,7 +49,10 @@ spec:
           - name: script
             value: |
               npx lerna bootstrap
-              lerna run build
+              ls
+              ls packages/
+              ls packages/core
+              npx lerna run build
     - - name: test
         templateRef:
           name: npm
@@ -60,7 +63,7 @@ spec:
             value: octommit
           - name: script
             value: |-
-              lerna run test -- --coverage;
+              npx lerna run test -- --coverage;
     - - name: semver
         templateRef:
           name: semantic-version
@@ -88,11 +91,10 @@ spec:
         arguments:
           parameters:
           - name: repository
-            value: octommit
+            value: octommit/packages/connector
           - name: script
             value: |-
               lerna publish --registry https://verdaccio.stocko-infra.net --repo-version;
-        when: "{{steps.get-tag.outputs.result}} == true"  
     - - name: docker-build-and-push
         templateRef:
           name: docker
