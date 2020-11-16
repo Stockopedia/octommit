@@ -26,6 +26,15 @@ interface UpdateArgs {
   githubToken: string;
 }
 
+class Org {
+  constructor(private readonly options: UpdateArgs) {}
+
+  org(name: string) {
+    this.options.org = name
+    return new Repository(this.options)
+  }
+}
+
 class Repository {
   constructor(private readonly options: UpdateArgs) {}
 
