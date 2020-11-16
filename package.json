@@ -3,11 +3,5 @@
   "private": true,
   "devDependencies": {
     "lerna": "^3.22.1"
-  },
-  "scripts": {
-    "lerna-semantic-release": "lerna-semantic-release pre"
-  },
-  "dependencies": {
-    "@qiwi/multi-semantic-release": "^3.8.5"
   }
 }

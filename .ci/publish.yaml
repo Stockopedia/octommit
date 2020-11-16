@@ -48,7 +48,8 @@ spec:
             value: octommit
           - name: script
             value: |
-              npx lerna bootstrap
+              npx lerna bootstrap --hoist
+              npm i -g tsc
               ls
               ls packages/
               ls packages/core

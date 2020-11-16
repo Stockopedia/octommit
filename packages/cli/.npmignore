@@ -3,3 +3,6 @@ jest.config.js
 stryker.conf.js
 tsconfig.json
 tslint.json
+Dockerfile.dev
+Dockerfile
+docker-compose.yaml
