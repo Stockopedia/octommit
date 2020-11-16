@@ -91,7 +91,7 @@ spec:
             value: octommit
           - name: script
             value: |-
-              lerna publish --registry https://verdaccio.stocko-infra.net;
+              lerna publish --registry https://verdaccio.stocko-infra.net --repo-version;
         when: "{{steps.get-tag.outputs.result}} == true"  
     - - name: docker-build-and-push
         templateRef:
