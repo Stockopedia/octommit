@@ -1,0 +1,3 @@
+{"total": {"lines":{"total":45,"covered":5,"skipped":0,"pct":11.11},"statements":{"total":45,"covered":5,"skipped":0,"pct":11.11},"functions":{"total":25,"covered":1,"skipped":0,"pct":4},"branches":{"total":4,"covered":0,"skipped":0,"pct":0}}
+,"/Users/tjaartbroodryk/work/octommit/packages/connector/src/index.ts": {"lines":{"total":45,"covered":5,"skipped":0,"pct":11.11},"functions":{"total":25,"covered":1,"skipped":0,"pct":4},"statements":{"total":45,"covered":5,"skipped":0,"pct":11.11},"branches":{"total":4,"covered":0,"skipped":0,"pct":0}}
+}

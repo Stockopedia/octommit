@@ -1,7 +1,7 @@
 {
   "name": "octommit-connector",
   "description": "octommit connector to update files in git",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "author": {
     "name": "Stockopedia"
   },
@@ -12,6 +12,7 @@
   "module": "dist/index.js",
   "source": "src/index.ts",
   "scripts": {
+    "test": "jest",
     "build": "tsc -p src",
     "format": "prettier --write 'src/**/*ts'",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
