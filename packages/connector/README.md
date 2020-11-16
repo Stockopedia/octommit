@@ -3,6 +3,7 @@
 ```js
 new Octommit(<github_access_token>)
     .update()
+    .org('Stockopedia')
     .repository(string)
     .sourceBranch(string)
     .outputBranch(string)
