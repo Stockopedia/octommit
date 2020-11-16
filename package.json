@@ -1,0 +1,19 @@
+{
+  "name": "octommit",
+  "version": "1.0.15",
+  "description": "[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stockopedia/octommit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Stockopedia/octommit/issues"
+  },
+  "homepage": "https://github.com/Stockopedia/octommit#readme"
+}
