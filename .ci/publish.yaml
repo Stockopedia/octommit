@@ -38,33 +38,16 @@ spec:
             value: "{{workflow.parameters.branch}}"
           - name: repository
             value: "octommit"
-    - - name: build
-        templateRef:
-          name: npm
-          template: run
+    - - name: build-packages
+        template: build-package
         arguments:
           parameters:
-          - name: repository
-            value: octommit
-          - name: script
-            value: |
-              npx lerna bootstrap --hoist
-              npm i -g tsc
-              ls
-              ls packages/
-              ls packages/core
-              npx lerna run build
-    - - name: test
-        templateRef:
-          name: npm
-          template: run
-        arguments:
-          parameters:
-          - name: repository
-            value: octommit
-          - name: script
-            value: |-
-              npx lerna run test -- --coverage;
+            - name: package
+              value: "{{item}}"
+        withItems: 
+          - core
+          - cli
+          - connector
     - - name: semver
         templateRef:
           name: semantic-version
@@ -85,17 +68,19 @@ spec:
             value: octommit
       - name: update-readme
         template: update-readme
-    - - name: npm-publish
-        templateRef:
-          name: npm
-          template: run
+    - - name: publish-packages
+        template: publish
         arguments:
           parameters:
-          - name: repository
-            value: octommit/packages/connector
-          - name: script
-            value: |-
-              lerna publish --registry https://verdaccio.stocko-infra.net --repo-version;
+            - name: package
+              value: "{{item}}"
+            - name: version
+              value: "{{steps.get-tag.outputs.parameters.tag}}"
+        withItems: 
+          - core
+          - connector
+          - cli
+        when: "{{steps.get-tag.outputs.result}} == true"
     - - name: docker-build-and-push
         templateRef:
           name: docker
@@ -110,6 +95,53 @@ spec:
             value: "--build-arg NPM_TOKEN=$(NPM_TOKEN)"
         when: "{{steps.get-tag.outputs.result}} == true"
 
+  - name: build-package
+    inputs:
+      parameters:
+        - name: package
+    steps:
+      - - name: build
+          templateRef:
+            name: npm
+            template: run
+          arguments:
+            parameters:
+            - name: repository
+              value: "octommit/packages/{{inputs.parameters.package}}"
+            - name: script
+              value: |
+                npm install
+                npm run build
+      - - name: test
+          templateRef:
+            name: npm
+            template: run
+          arguments:
+            parameters:
+            - name: repository
+              value: "octommit/packages/{{inputs.parameters.package}}"
+            - name: script
+              value: |-
+                npp run test -- --coverage;
+
+  - name: publish
+    inputs:
+      parameters:
+        - name: package
+        - name: version
+    steps:
+      - - name: npm-publish
+          templateRef:
+            name: npm
+            template: run
+          arguments:
+            parameters:
+            - name: repository
+              value: "octommit/packages/{{inputs.parameters.package}}"
+            - name: script
+              value: |-
+                npm version {{inputs.parameters.version}}
+                npm publish --registry https://verdaccio.stocko-infra.net;
   - name: update-readme
     steps:
       - - name: git-sync
@@ -119,7 +151,7 @@ spec:
           arguments:
             parameters:
               - name: repository
-                value: octommit
+                value: "octommit"
               - name: script
                 value: |-
                   git pull
@@ -130,10 +162,14 @@ spec:
           arguments:
             parameters:
             - name: repository
-              value: octommit
+              value: "octommit/packages/{{item}}"
             - name: script
               value: |-
-                lerna run make:badges
+                npm run make:badges
+          withItems:
+            - core
+            - connector
+            - cli
       - - name: commit-readme
           templateRef:
             name: git
@@ -141,7 +177,7 @@ spec:
           arguments:
             parameters:
               - name: repository
-                value: octommit
+                value: "octommit"
               - name: script
                 value: |-
                   git add README.md;
