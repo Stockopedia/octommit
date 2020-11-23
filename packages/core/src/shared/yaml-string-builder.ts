@@ -17,7 +17,11 @@ export class YamlStringBuilder {
   pushValue(path: string, value: string) {
     const pathArray = path.split(":");
     const existingArray = get(this.file, pathArray) ?? [];
-    this.file = set(this.file, pathArray, new Set([...existingArray, value]));
+    this.file = set(
+      this.file,
+      pathArray,
+      Array.from(new Set([...existingArray, value])),
+    );
 
     return this;
   }

@@ -44,6 +44,11 @@ describe("update command", () => {
 bar: yo2
 arr:
  - other
+ - baz
+some:
+ deep:
+   arr:
+    - baz
 `;
     const args = makeArgs();
 
@@ -108,7 +113,7 @@ function makeArgs({
   sourceBranch = "sourceBranch",
   outputBranch = "outputBranch",
   message = "mesage",
-  set = ["[foo]=yo", "[bar]=yo2"],
+  set = ["[foo]=yo", "[bar]=yo2", "[arr[]]=baz", "[some:deep:arr[]]=baz"],
   remove = ["[baz]", "[arr[]]=yo"],
   pr = true,
 } = {}): UpdateArgs {

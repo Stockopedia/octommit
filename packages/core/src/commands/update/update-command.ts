@@ -33,15 +33,17 @@ export class UpdateCommand {
 
     targets.forEach(({ path, value }) => {
       if (path.slice(-2) === "[]") {
-        builder.pushValue(path.slice(-2), value);
+        builder.pushValue(path.slice(0, -2), value);
+      } else {
+        builder.setValue(path!, value!);
       }
-      builder.setValue(path!, value!);
     });
     removeTargets.forEach(({ path, value }) => {
       if (path.slice(-2) === "[]") {
         builder.removeItem(path.slice(0, -2), value!);
+      } else {
+        builder.deleteValue(path!);
       }
-      builder.deleteValue(path!);
     });
 
     const result = await this.gitClient.putFile(
