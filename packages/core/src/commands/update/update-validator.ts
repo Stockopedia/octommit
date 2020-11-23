@@ -10,6 +10,7 @@ export class UpdateValidator {
       repo,
       org,
       targets,
+      removeTargets,
       outputPath,
       sourceBranch,
       outputBranch,
@@ -25,8 +26,10 @@ export class UpdateValidator {
     if (!repo) {
       throw new Error("Please provide a repository");
     }
-    if (targets.length === 0) {
-      throw new Error("Please provide a property path and value to set");
+    if (targets.length === 0 && removeTargets.length === 0) {
+      throw new Error(
+        "Please provide a property path and value to set or remove",
+      );
     }
     if (!org) {
       throw new Error("Please provide a github organisation");
