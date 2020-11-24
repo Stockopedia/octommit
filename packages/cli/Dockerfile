@@ -12,4 +12,4 @@ RUN npm set registry https://verdaccio.stocko-infra.net
 RUN npm config set //verdaccio.stocko-infra.net/:_authToken ${NPM_TOKEN}
 RUN npm config set //verdaccio.stocko-infra.net/:always-auth true
 
-RUN npm -g install octommit@${TAG} --registry https://verdaccio.stocko-infra.net
+RUN npm -g install @octommit/cli@${TAG} --registry https://verdaccio.stocko-infra.net

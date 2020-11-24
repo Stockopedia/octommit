@@ -1,0 +1,21 @@
+{
+  "name": "octommit",
+  "version": "1.0.17",
+  "main": "index.js",
+  "repository": "git@github.com:Stockopedia/octommit.git",
+  "author": "Tj Broodryk <tjaart@stockopedia.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "test": "yarn workspaces run test"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/ts-jest",
+      "**/ts-jest/**"
+    ]
+  }
+}

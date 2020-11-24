@@ -1,5 +1,5 @@
 {
-  "name": "octommit-core",
+  "name": "@octommit/core",
   "description": "cli program to update files in git",
   "version": "1.0.17",
   "author": {

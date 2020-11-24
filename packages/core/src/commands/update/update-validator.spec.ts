@@ -12,7 +12,7 @@ describe("update command validator", () => {
       [makeArgs({ outputBranch: "" }), "outputBranch"],
       [makeArgs({ sourceBranch: "" }), "sourceBranch"],
       [makeArgs({ outputPath: "" }), "outputPath"],
-      [makeArgs({ set: "" }), "set"],
+      [makeArgs({ set: "", remove: "" }), "set/remove"],
     ];
 
     fixtures.forEach(([fixture, param]) => {

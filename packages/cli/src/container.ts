@@ -8,7 +8,7 @@ import {
   UpdateParamsBuilder,
   UpdateValidator,
   GitClient, YamlStringBuilder
-} from "octommit-core";
+} from "@octommit/core";
 import { Orchestrator } from "./orchestrator";
 import {
   COMMIT_MESSAGE,

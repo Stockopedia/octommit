@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import * as chalk from "chalk";
 import * as Vorpal from "vorpal";
 
-import { UpdateArgs, UpdateCommand, UpdateValidator, HandledError, LogEvent, LogType } from "octommit-core";
+import { UpdateArgs, UpdateCommand, UpdateValidator, HandledError, LogEvent, LogType } from "@octommit/core";
 
 export class Orchestrator {
   private readonly vorpal: Vorpal;

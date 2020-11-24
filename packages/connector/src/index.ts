@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 
 import { Octokit } from "@octokit/rest";
 
-import { GitClient, YamlStringBuilder, UpdateParamsBuilder, UpdateCommand, UpdateArgs as UpdateCommandArgs } from "octommit-core";
+import { GitClient, YamlStringBuilder, UpdateParamsBuilder, UpdateCommand, UpdateArgs as UpdateCommandArgs } from "@octommit/core";
 
 export class Octommit {
   constructor(private readonly githubToken: string) {}
