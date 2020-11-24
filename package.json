@@ -7,7 +7,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "yarn workspaces run test"
+    "test": "yarn workspaces run test",
+    "lerna": "lerna"
+  },
+  "publishConfig": {
+    "registry": "https://verdaccio.stocko-infra.net"
   },
   "workspaces": {
     "packages": [
@@ -17,5 +21,8 @@
       "**/ts-jest",
       "**/ts-jest/**"
     ]
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1"
   }
 }
