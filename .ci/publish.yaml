@@ -38,16 +38,29 @@ spec:
             value: "{{workflow.parameters.branch}}"
           - name: repository
             value: "octommit"
-    - - name: build-packages
-        template: build-package
+    - - name: build
+        templateRef:
+          name: npm
+          template: run
         arguments:
           parameters:
-            - name: package
-              value: "{{item}}"
-        withItems: 
-          - core
-          - cli
-          - connector
+          - name: repository
+            value: "octommit"
+          - name: script
+            value: |
+              yarn install --check-cache;
+              yarn build
+    - - name: test
+        templateRef:
+          name: npm
+          template: run
+        arguments:
+          parameters:
+          - name: repository
+            value: "octommit"
+          - name: script
+            value: |-
+              yarn test --coverage;
     - - name: semver
         templateRef:
           name: semantic-version
@@ -66,28 +79,12 @@ spec:
           parameters:
           - name: repository
             value: octommit
-      - name: update-readme
-        template: update-readme
-    - - name: publish-core
+    - - name: publish
         template: publish
         arguments:
           parameters:
-            - name: package
-              value: "core"
             - name: version
               value: "{{steps.get-tag.outputs.parameters.tag}}"
-        when: "{{steps.get-tag.outputs.result}} == true"
-    - - name: publish-packages
-        template: publish
-        arguments:
-          parameters:
-            - name: package
-              value: "{{item}}"
-            - name: version
-              value: "{{steps.get-tag.outputs.parameters.tag}}"
-        withItems: 
-          - connector
-          - cli
         when: "{{steps.get-tag.outputs.result}} == true"
     - - name: docker-build-and-push
         templateRef:
@@ -103,39 +100,9 @@ spec:
             value: "--build-arg NPM_TOKEN=$(NPM_TOKEN)"
         when: "{{steps.get-tag.outputs.result}} == true"
 
-  - name: build-package
-    inputs:
-      parameters:
-        - name: package
-    steps:
-      - - name: build
-          templateRef:
-            name: npm
-            template: run
-          arguments:
-            parameters:
-            - name: repository
-              value: "octommit/packages/{{inputs.parameters.package}}"
-            - name: script
-              value: |
-                npm install
-                npm run build
-      - - name: test
-          templateRef:
-            name: npm
-            template: run
-          arguments:
-            parameters:
-            - name: repository
-              value: "octommit/packages/{{inputs.parameters.package}}"
-            - name: script
-              value: |-
-                npm run test -- --coverage;
-
   - name: publish
     inputs:
       parameters:
-        - name: package
         - name: version
     steps:
       - - name: npm-publish
@@ -145,49 +112,8 @@ spec:
           arguments:
             parameters:
             - name: repository
-              value: "octommit/packages/{{inputs.parameters.package}}"
+              value: "octommit"
             - name: script
               value: |-
                 npm version {{inputs.parameters.version}}
                 npm publish --registry https://verdaccio.stocko-infra.net;
-  - name: update-readme
-    steps:
-      - - name: git-sync
-          templateRef:
-            name: git
-            template: run
-          arguments:
-            parameters:
-              - name: repository
-                value: "octommit"
-              - name: script
-                value: |-
-                  git pull
-      - - name: update-readme
-          templateRef:
-            name: npm
-            template: run
-          arguments:
-            parameters:
-            - name: repository
-              value: "octommit/packages/{{item}}"
-            - name: script
-              value: |-
-                npm run make:badges
-          withItems:
-            - core
-            - connector
-            - cli
-      - - name: commit-readme
-          templateRef:
-            name: git
-            template: run
-          arguments:
-            parameters:
-              - name: repository
-                value: "octommit"
-              - name: script
-                value: |-
-                  git add README.md;
-                  git commit -m "docs(ci): update readme [skip ci]";
-                  git push

@@ -8,6 +8,5 @@ coverage
 reports
 #jest
 globalConfig.json
-.pnp.js
-.yarn/install-state*
-.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
