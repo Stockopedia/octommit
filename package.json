@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "yarn workspaces run test",
+    "test": "yarn workspaces foreach run test",
     "lerna": "lerna"
   },
   "publishConfig": {

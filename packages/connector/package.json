@@ -6,7 +6,7 @@
     "name": "Stockopedia"
   },
   "repository": {
-    "url": "https://github.com/Stockopedia/octommit/connector"
+    "url": "https://github.com/Stockopedia/octommit/packages/connector"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -20,6 +20,9 @@
     "make:badges": "node_modules/.bin/jest-badges-readme",
     "make:readme": "npm run test -- --coverage && npm run make:badges",
     "make:changelog": "changelog"
+  },
+  "publishConfig": {
+    "registry": "https://verdaccio.stocko-infra.net"
   },
   "dependencies": {
     "@octokit/auth-token": "^2.4.2",
