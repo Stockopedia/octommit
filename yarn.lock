@@ -1013,56 +1013,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octommit/core@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@octommit/core@workspace:."
-  dependencies:
-    "@commitlint/cli": ^11.0.0
-    "@commitlint/config-conventional": ^11.0.0
-    "@jest/globals": ^26.6.2
-    "@octokit/auth-token": ^2.4.2
-    "@octokit/core": ^3.1.3
-    "@octokit/rest": ^18.0.6
-    "@octokit/types": ^5.5.0
-    "@olavoparno/jest-badges-readme": ^1.5.1
-    "@stryker-mutator/core": ^4.0.0
-    "@stryker-mutator/jest-runner": ^4.0.0
-    "@types/faker": ^5.1.3
-    "@types/jest": ^26.0.15
-    "@types/lodash": ^4.14.162
-    "@types/morgan": ^1.9.1
-    "@types/node": ^14.0.27
-    "@types/vorpal": ^1.12.0
-    chalk: ^4.1.0
-    dotenv: ^8.2.0
-    events: ^3.2.0
-    faker: ^5.1.0
-    generate-changelog: ^1.8.0
-    http: 0.0.1-security
-    husky: ^4.3.0
-    import-sort-style-module: ^6.0.0
-    jest: ^26.6.3
-    lint-staged: ^10.4.0
-    lodash: ^4.17.20
-    ncp: ^2.0.0
-    node-mocks-http: ^1.9.0
-    nodemon: ^2.0.4
-    prettier: ^2.1.2
-    prettier-plugin-import-sort: 0.0.6
-    reflect-metadata: ^0.1.13
-    ts-jest: ^26.4.4
-    ts-node: ^8.10.2
-    tslint-config-prettier: ^1.18.0
-    tsyringe: ^4.3.0
-    typescript: ^4.0.3
-    vorpal: ^1.12.0
-    winston: ^3.3.3
-    yaml: ^1.10.0
-  bin:
-    octommit: dist/cli/index.js
-  languageName: unknown
-  linkType: soft
-
 "@olavoparno/jest-badges-readme@npm:^1.5.1":
   version: 1.5.1
   resolution: "@olavoparno/jest-badges-readme@npm:1.5.1"
@@ -6011,6 +5961,56 @@ fsevents@~2.1.2:
   checksum: e22d555d3bb73c665a5baa1da7789d3a98f557d8712a9bbe34dc59d4adbce9d390245815296025de5260b18794de647401a6b2ae1ba0ab854a6710e2958291f6
   languageName: node
   linkType: hard
+
+"octommit@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "octommit@workspace:."
+  dependencies:
+    "@commitlint/cli": ^11.0.0
+    "@commitlint/config-conventional": ^11.0.0
+    "@jest/globals": ^26.6.2
+    "@octokit/auth-token": ^2.4.2
+    "@octokit/core": ^3.1.3
+    "@octokit/rest": ^18.0.6
+    "@octokit/types": ^5.5.0
+    "@olavoparno/jest-badges-readme": ^1.5.1
+    "@stryker-mutator/core": ^4.0.0
+    "@stryker-mutator/jest-runner": ^4.0.0
+    "@types/faker": ^5.1.3
+    "@types/jest": ^26.0.15
+    "@types/lodash": ^4.14.162
+    "@types/morgan": ^1.9.1
+    "@types/node": ^14.0.27
+    "@types/vorpal": ^1.12.0
+    chalk: ^4.1.0
+    dotenv: ^8.2.0
+    events: ^3.2.0
+    faker: ^5.1.0
+    generate-changelog: ^1.8.0
+    http: 0.0.1-security
+    husky: ^4.3.0
+    import-sort-style-module: ^6.0.0
+    jest: ^26.6.3
+    lint-staged: ^10.4.0
+    lodash: ^4.17.20
+    ncp: ^2.0.0
+    node-mocks-http: ^1.9.0
+    nodemon: ^2.0.4
+    prettier: ^2.1.2
+    prettier-plugin-import-sort: 0.0.6
+    reflect-metadata: ^0.1.13
+    ts-jest: ^26.4.4
+    ts-node: ^8.10.2
+    tslint-config-prettier: ^1.18.0
+    tsyringe: ^4.3.0
+    typescript: ^4.0.3
+    vorpal: ^1.12.0
+    winston: ^3.3.3
+    yaml: ^1.10.0
+  bin:
+    octommit: dist/cli/index.js
+  languageName: unknown
+  linkType: soft
 
 "once@npm:^1.3.0, once@npm:^1.3.1, once@npm:^1.4.0":
   version: 1.4.0

@@ -9,3 +9,4 @@ reports
 #jest
 globalConfig.json
 .pnp.js
+.yarn/install-state*

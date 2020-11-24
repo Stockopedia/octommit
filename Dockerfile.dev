@@ -1,0 +1,23 @@
+FROM node:14.13.0-alpine3.10 as builder
+
+WORKDIR /app
+
+COPY package.json /app/
+COPY yarn.lock /app/
+COPY .yarn /app/
+
+RUN yarn install
+
+COPY . .
+
+FROM builder as app
+
+COPY --from=builder /app/dist /app/dist/
+
+COPY package.json /app/
+
+RUN yarn build
+
+ENV NODE_ENV production
+
+RUN npm link

@@ -1,5 +1,5 @@
 {
-  "name": "@octommit/core",
+  "name": "octommit",
   "description": "cli program to update files in git",
   "version": "1.0.20",
   "author": {
@@ -20,9 +20,7 @@
     "make:readme": "npm run test -- --coverage && npm run make:badges",
     "make:changelog": "changelog"
   },
-  "bin": {
-    "octommit": "dist/cli/index.js"
-  },
+  "bin": "dist/cli/index.js",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "source": "src/index.ts",
