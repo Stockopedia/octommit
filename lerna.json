@@ -9,7 +9,7 @@
     "publish": {
       "conventionalCommits": true,
       "message": "ci(release): publish",
-      "registry": "https://npm.pkg.github.com",
+      "registry": "https://verdaccio.stocko-infra.net",
       "allowBranch": "main"
     }
   }
