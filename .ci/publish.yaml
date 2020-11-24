@@ -46,6 +46,7 @@ spec:
             value: "octommit"
           - name: script
             value: |
+              ls .yarn/
               yarn install --check-cache;
               yarn build
     - - name: test
@@ -123,10 +124,30 @@ spec:
         - name: script
         - name: image
           value: "node:15-alpine"
+      artifacts:
+        - name: dependencies
+          path: /tmp/octommit/.yarn
+          optional: true
+          s3:
+            bucket: devops.argo-workflows.stockopedia.com
+            endpoint: s3.amazonaws.com
+            region: eu-west-1
+            insecure: false
+            roleARN: arn:aws:iam::276791533976:role/ArgoWorkflowsSystemAccessRole
+            useSDKCreds: true
+            key: octommit/.yarn.gz
     outputs:
       artifacts:
-        - name: test-file
-          path: /tmp/.yarn/
+        - name: dependencies
+          path: /tmp/octommit/.yarn/
+          s3:
+            bucket: devops.argo-workflows.stockopedia.com
+            endpoint: s3.amazonaws.com
+            region: eu-west-1
+            insecure: false
+            roleARN: arn:aws:iam::276791533976:role/ArgoWorkflowsSystemAccessRole
+            useSDKCreds: true
+            key: octommit/.yarn.gz
     container:
       image: "{{inputs.parameters.image}}"
       workingDir: "/tmp/{{inputs.parameters.repository}}"
