@@ -10,3 +10,4 @@ reports
 globalConfig.json
 .pnp.js
 .yarn/install-state*
+.yarn/cache
