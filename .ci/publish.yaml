@@ -39,14 +39,15 @@ spec:
           - name: repository
             value: "octommit"
     - - name: build
-        template: npm
+        templateRef:
+          name: npm
+          template: run
         arguments:
           parameters:
           - name: repository
             value: "octommit"
           - name: script
             value: |
-              ls .yarn/
               yarn install --check-cache;
               yarn build
     - - name: test
@@ -116,57 +117,3 @@ spec:
               value: |-
                 npm version {{inputs.parameters.version}}
                 npm publish --registry https://verdaccio.stocko-infra.net;
-
-  - name: npm
-    inputs:
-      parameters:
-        - name: repository
-        - name: script
-        - name: image
-          value: "node:15-alpine"
-      artifacts:
-        - name: dependencies
-          path: /tmp/octommit/.yarn
-          optional: true
-          s3:
-            bucket: devops.argo-workflows.stockopedia.com
-            endpoint: s3.amazonaws.com
-            region: eu-west-1
-            insecure: false
-            roleARN: arn:aws:iam::276791533976:role/ArgoWorkflowsSystemAccessRole
-            useSDKCreds: true
-            key: octommit/.yarn.gz
-    outputs:
-      artifacts:
-        - name: dependencies
-          path: /tmp/octommit/.yarn/
-          s3:
-            bucket: devops.argo-workflows.stockopedia.com
-            endpoint: s3.amazonaws.com
-            region: eu-west-1
-            insecure: false
-            roleARN: arn:aws:iam::276791533976:role/ArgoWorkflowsSystemAccessRole
-            useSDKCreds: true
-            key: octommit/.yarn.gz
-    container:
-      image: "{{inputs.parameters.image}}"
-      workingDir: "/tmp/{{inputs.parameters.repository}}"
-      env:
-        - name: NPM_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: workflows-npm-secret
-              key: token
-      command:
-        - sh
-        - -c
-        - |
-          ls
-          npm set registry https://verdaccio.stocko-infra.net
-          npm config set //verdaccio.stocko-infra.net/:_authToken "${NPM_TOKEN}"
-          npm config set //verdaccio.stocko-infra.net/:always-auth true
-          {{inputs.parameters.script}}
-      volumeMounts:
-        - name: workdir
-          mountPath: /tmp
-          readOnly: false
