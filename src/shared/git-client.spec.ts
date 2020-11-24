@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import { Octokit } from "@octokit/rest";
 
 import { GitClient } from "./git-client";
+import { expect, describe, it, jest, beforeAll } from "@jest/globals";
 import { HandledError } from "./handled-error";
 
 describe("git client", () => {
@@ -57,17 +58,24 @@ describe("git client", () => {
     describe("when api errors", () => {
       const octokit = mockOctokit({
         repos: {
-          getContent: jest.fn(() => {
+          getContent: () => {
             throw new Error();
-          }),
+          },
         },
       });
       const client = new GitClient(octokit, eventEmitter);
 
       it("should get a file from github", async () => {
-        await expect(
-          client.getFile(pathToFile, testRepoName, testOrgName, testBranchName),
-        ).rejects.toThrowError(HandledError);
+        try {
+          await client.getFile(
+            pathToFile,
+            testRepoName,
+            testOrgName,
+            testBranchName,
+          );
+        } catch (e) {
+          expect(e).toBeInstanceOf(HandledError);
+        }
       });
     });
   });
@@ -210,8 +218,8 @@ describe("git client", () => {
         const client = new GitClient(octokit, eventEmitter);
 
         it("should throw handled exception", async () => {
-          await expect(
-            client.putFile(
+          try {
+            await client.putFile(
               testFile,
               testRepoName,
               testOrgName,
@@ -221,8 +229,10 @@ describe("git client", () => {
               pathToFile,
               testMessage,
               existingFileSha,
-            ),
-          ).rejects.toThrowError(HandledError);
+            );
+          } catch (e) {
+            expect(e).toBeInstanceOf(HandledError);
+          }
         });
       });
     });
@@ -328,8 +338,8 @@ describe("git client", () => {
         const client = new GitClient(octokit, eventEmitter);
 
         it("should thorw handled error", async () => {
-          await expect(
-            client.putFile(
+          try {
+            await client.putFile(
               testFile,
               testRepoName,
               testOrgName,
@@ -339,8 +349,10 @@ describe("git client", () => {
               pathToFile,
               testMessage,
               existingFileSha,
-            ),
-          ).rejects.toThrowError(HandledError);
+            );
+          } catch (e) {
+            expect(e).toBeInstanceOf(HandledError);
+          }
         });
       });
     });
@@ -504,8 +516,8 @@ describe("git client", () => {
       const client = new GitClient(octokit, eventEmitter);
 
       it("should throw a handled expection", async () => {
-        await expect(
-          client.putFile(
+        try {
+          await client.putFile(
             testFile,
             testRepoName,
             testOrgName,
@@ -515,8 +527,10 @@ describe("git client", () => {
             pathToFile,
             testMessage,
             existingFileSha,
-          ),
-        ).rejects.toThrowError(HandledError);
+          );
+        } catch (e) {
+          expect(e).toBeInstanceOf(HandledError);
+        }
       });
     });
   });
@@ -555,21 +569,23 @@ describe("git client", () => {
       });
       const client = new GitClient(octokit, eventEmitter);
       it("should throw handled error", async () => {
-        await expect(
-          client.createPullRequest(
+        try {
+          await client.createPullRequest(
             testOutputBranch,
             testRepoName,
             "pr title",
             testSourceBranch,
             testOutputBranch,
-          ),
-        ).rejects.toThrowError(HandledError);
+          );
+        } catch (e) {
+          expect(e).toBeInstanceOf(HandledError);
+        }
       });
     });
   });
 });
 
 function mockOctokit(methods?: any) {
-  const Mock = jest.fn<Octokit>(() => methods);
+  const Mock = jest.fn<Octokit, unknown[]>(() => methods);
   return new Mock();
 }

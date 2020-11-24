@@ -6,6 +6,7 @@ import { YamlStringBuilder } from "../../shared/yaml-string-builder";
 import { UpdateArgs } from "./update-args";
 import { UpdateCommand } from "./update-command";
 import { UpdateParamsBuilder } from "./update-params-builder";
+import { expect, describe, it, jest, beforeEach } from "@jest/globals";
 
 declare global {
   namespace jest {
@@ -16,7 +17,7 @@ declare global {
 }
 
 expect.extend({
-  toMatchYaml(received, expected) {
+  toMatchYaml(received: any, expected: any) {
     return {
       message: () => "yaml objects do not match",
       pass: isEqual(YAML.parse(received), YAML.parse(expected)),
@@ -64,7 +65,7 @@ some:
       ).action(args);
 
       expect(gitClient.putFile).toHaveBeenCalledWith(
-        expect.toMatchYaml(expectedFile),
+        (expect as any).toMatchYaml(expectedFile),
         args.repo,
         args.org,
         args.sourceBranch,
@@ -101,7 +102,7 @@ some:
 });
 
 function mockGitClient(methods?: any) {
-  const Mock = jest.fn<GitClient>(() => methods);
+  const Mock = jest.fn<GitClient, unknown[]>(() => methods);
   return new Mock();
 }
 

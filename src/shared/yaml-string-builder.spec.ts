@@ -1,6 +1,7 @@
 import * as YAML from "yaml";
 
 import { YamlStringBuilder } from "./yaml-string-builder";
+import { expect, describe, it } from "@jest/globals";
 
 const yamlFile = `
   name: test_file

@@ -1,6 +1,7 @@
 import { UpdateArgs } from "./update-args";
 import { UpdateParamsBuilder } from "./update-params-builder";
 import { UpdateValidator } from "./update-validator";
+import { expect, describe, it } from "@jest/globals";
 
 describe("update command validator", () => {
   const validator = new UpdateValidator(new UpdateParamsBuilder({} as any));

@@ -12,5 +12,5 @@
     "lib": ["es2018", "dom"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "src/__tests__"]
+  "exclude": ["node_modules", "**/*.spec.ts", "src/__tests__", ".pnp.js"]
 }
