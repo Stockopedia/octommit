@@ -2,7 +2,12 @@ import { EventEmitter } from "events";
 
 import { Octokit } from "@octokit/rest";
 
-import { GitClient, YamlStringBuilder, UpdateParamsBuilder, UpdateCommand, UpdateArgs as UpdateCommandArgs } from "@octommit/core";
+import {
+  UpdateCommand,
+  UpdateArgs as UpdateCommandArgs,
+  UpdateParamsBuilder,
+} from "../commands";
+import { GitClient, YamlStringBuilder } from "../shared";
 
 export class Octommit {
   constructor(private readonly githubToken: string) {}
@@ -30,8 +35,8 @@ class Org {
   constructor(private readonly options: UpdateArgs) {}
 
   org(name: string) {
-    this.options.org = name
-    return new Repository(this.options)
+    this.options.org = name;
+    return new Repository(this.options);
   }
 }
 

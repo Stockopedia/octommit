@@ -7,9 +7,8 @@ import {
   UpdateCommand,
   UpdateParamsBuilder,
   UpdateValidator,
-  GitClient, YamlStringBuilder
-} from "@octommit/core";
-import { Orchestrator } from "./orchestrator";
+} from "../commands";
+import { GitClient, YamlStringBuilder } from "../shared";
 import {
   COMMIT_MESSAGE,
   CREATE_PR,
@@ -22,7 +21,8 @@ import {
   REPO,
   SOURCE_BRANCH,
   SOURCE_PATH,
-} from "./var";
+} from "../var";
+import { Orchestrator } from "./orchestrator";
 
 enum Symbols {
   Config = "config",
