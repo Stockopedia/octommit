@@ -39,9 +39,7 @@ spec:
           - name: repository
             value: "octommit"
     - - name: build
-        templateRef:
-          name: npm
-          template: run
+        template: npm
         arguments:
           parameters:
           - name: repository
@@ -117,3 +115,37 @@ spec:
               value: |-
                 npm version {{inputs.parameters.version}}
                 npm publish --registry https://verdaccio.stocko-infra.net;
+
+  - name: npm
+    inputs:
+      parameters:
+        - name: repository
+        - name: script
+        - name: image
+          value: "node:15-alpine"
+    outputs:
+      artifacts:
+        - name: test-file
+          path: /tmp/.yarn/
+    container:
+      image: "{{inputs.parameters.image}}"
+      workingDir: "/tmp/{{inputs.parameters.repository}}"
+      env:
+        - name: NPM_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: workflows-npm-secret
+              key: token
+      command:
+        - sh
+        - -c
+        - |
+          ls
+          npm set registry https://verdaccio.stocko-infra.net
+          npm config set //verdaccio.stocko-infra.net/:_authToken "${NPM_TOKEN}"
+          npm config set //verdaccio.stocko-infra.net/:always-auth true
+          {{inputs.parameters.script}}
+      volumeMounts:
+        - name: workdir
+          mountPath: /tmp
+          readOnly: false
