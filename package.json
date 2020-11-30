@@ -12,7 +12,7 @@
     "debug": "npm run build && npm run start",
     "test": "jest",
     "build": "tsc -p src",
-    "start": "node dist/index.js",
+    "start": "node dist/cli/index.js",
     "format": "prettier --write 'src/**/*ts'",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "lint:test": "tslint -c tslint.json 'spec/**/*.ts'"
