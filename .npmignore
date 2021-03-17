@@ -4,3 +4,12 @@ stryker.conf.js
 tsconfig.json
 tslint.json
 .yarn
+.*
+docker-compose.yaml
+Dockerfile*
+Makefile*
+stryker*
+.vscode
+coverage
+.yarn
+.env*
