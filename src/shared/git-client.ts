@@ -26,8 +26,8 @@ export class GitClient {
       });
 
       return {
-        data: Buffer.from(data.content, "base64").toString(),
-        sha: data.sha,
+        data: Buffer.from((data as any).content, "base64").toString(),
+        sha: (data as any).sha,
       };
     } catch (e) {
       throw new HandledError(`uanble to get file at: ${path}`, e);
