@@ -41,9 +41,9 @@
     "yaml": "^1.10.0"
   },
   "devDependencies": {
-    "@jest/globals": "^26.6.2",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@jest/globals": "^26.6.2",
     "@octokit/types": "^5.5.0",
     "@stryker-mutator/core": "^4.0.0",
     "@stryker-mutator/jest-runner": "^4.0.0",
