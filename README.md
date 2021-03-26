@@ -1,20 +1,36 @@
+![GITHUB-BADGE](https://github.com/Stockopedia/octommit/workflows/Release/badge.svg)
+
 # Octommit
 
-## Env
+A simple nodejs utility to update yaml files in github.
+
+## Why
+
+We use this tool internally as part of our gitops setup. For example, it can be used to update docker image tags at the end of a CI pipeline.
+
+This package exposes both an CLI interface, and a NodeJS connector.
+
+## NodeJS
+
+See the `examples` directory.
+
+## CLI
+
+### Env
 
 `GITHUB_TOKEN` is the only **required** env var. This is the `personal access token` for a github user/bot
 
-## Commands
+### Commands
 
-### help
+#### help
 
 Lists avalible `octommit` commands
 
-#### Usage
+##### Usage
 
 `octommit help`
 
-### Update
+#### Update
 
 Used to update a yaml file in github
 
@@ -24,10 +40,10 @@ Used to update a yaml file in github
 octommit update --set[path.to.var]=new_value --set[foo.bar[]]=yawn --remove[some.arrayValue[]]=yawn --remove [some.property] --o --pr --repo <reponame> --org Stockopedia --sourcePath path/to/file.yaml --outputPath /path/to/outputfile.yaml --sourceBranch main --outputBranch some-other-branch --message "commit message"
 ```
 
-#### Options
+##### Options
 
-| name         | type     | desc                                                                                                                                                           | env                                                                                                                                     | cli                                                                    |
-| ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| name         | type     | desc | env  | cli  |
+| ------------ | -------- | ---- | ---- | ---- |
 | repo         | string   | The name of the github repository.                                                                                                                             | `REPO=<name>`                                                                                                                           | `--repo <name>`                                                        |
 | pr           | boolean  | Whether or not to open a PR. Will only do so if the target branch it different to the output branch.                                                           | `CREATE_PR=true`                                                                                                                        | `--pr`                                                                 |
 | output       | boolean  | Whether or not to output the command response                                                                                                                  |                                                                                                                                         | `--o`                                                                  |
@@ -40,20 +56,6 @@ octommit update --set[path.to.var]=new_value --set[foo.bar[]]=yawn --remove[some
 | outputBranch | string   | The branch name for the resulting yaml                                                                                                                         | Can be the same as the source branch. If the outputBranch already exists, it will use that/ If it does not, it will create a new branch | `OUTPUT_BRANCH=branch-name`                                            | `--outputBranch branch-name` |
 | message      | string   | The desired github commit message                                                                                                                              | `MESSAGE=chore(some-scope): some useful message`                                                                                        | `--message "chore(some-scope): some useful message"`                   |
 
-## Contributing
+## Limitations
 
-example .env
-
-```
-GITHUB_ACCESS_TOKEN=
-SOURCE_FILE=deployments/app/directory-service/values.yaml
-VALUE_PATH=image.tag
-VALUE=8893009
-REPO=cluster-test
-OUTPUT_PATH=deployments/app/directory-service/values-2.yaml
-ORG=Stockopedia
-SOURCE_BRANCH=master
-OUTPUT_BRANCH=chore/argo-bot-test-3
-MESSAGE=chore(directory-service): update docker tag
-CREATE_PR=true
-```
+At the moment, this library only supports updating one file per commit.
