@@ -6,13 +6,9 @@ A simple nodejs utility to update yaml files in github.
 
 ## Why
 
-We use this tool internally as part of our gitops setup. For example, it can be used to update docker image tags at the end of a CI pipeline.
+In our GitOps process, the docker tags in our infrastructure git repos need to be updated whenever there's a new container build. We created Ocommit as a way of automating this process.
 
 This package exposes both an CLI interface, and a NodeJS connector.
-
-## NodeJS
-
-See the `examples` directory.
 
 ## CLI
 
@@ -42,8 +38,8 @@ octommit update --set[path.to.var]=new_value --set[foo.bar[]]=yawn --remove[some
 
 ##### Options
 
-| name         | type     | desc | env  | cli  |
-| ------------ | -------- | ---- | ---- | ---- |
+| name         | type     | desc                                                                                                                                                           | env                                                                                                                                     | cli                                                                    |
+| ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------- |
 | repo         | string   | The name of the github repository.                                                                                                                             | `REPO=<name>`                                                                                                                           | `--repo <name>`                                                        |
 | pr           | boolean  | Whether or not to open a PR. Will only do so if the target branch it different to the output branch.                                                           | `CREATE_PR=true`                                                                                                                        | `--pr`                                                                 |
 | output       | boolean  | Whether or not to output the command response                                                                                                                  |                                                                                                                                         | `--o`                                                                  |
@@ -55,6 +51,10 @@ octommit update --set[path.to.var]=new_value --set[foo.bar[]]=yawn --remove[some
 | sourceBranch | string   | The name of the branch in which to find the file                                                                                                               | `SOURCE_BRANCH=branch-name`                                                                                                             | `--sourceBranch branch-name`                                           |
 | outputBranch | string   | The branch name for the resulting yaml                                                                                                                         | Can be the same as the source branch. If the outputBranch already exists, it will use that/ If it does not, it will create a new branch | `OUTPUT_BRANCH=branch-name`                                            | `--outputBranch branch-name` |
 | message      | string   | The desired github commit message                                                                                                                              | `MESSAGE=chore(some-scope): some useful message`                                                                                        | `--message "chore(some-scope): some useful message"`                   |
+
+## NodeJS
+
+See the `example` directory.
 
 ## Limitations
 
