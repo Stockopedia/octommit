@@ -107,12 +107,12 @@ class Command {
   }
 
   remove(path: string, value: string) {
-    this.options.set!.push(`[${path}]=${value}`);
+    this.options.remove!.push(`[${path}]=${value}`);
     return this;
   }
 
   removeFromArray(path: string, value: string) {
-    this.options.set!.push(`[${path}[]]=${value}`);
+    this.options.remove!.push(`[${path}[]]=${value}`);
     return this;
   }
 
