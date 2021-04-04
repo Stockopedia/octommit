@@ -70,8 +70,5 @@
       "style": "module",
       "parser": "typescript"
     }
-  },
-  "publishConfig": {
-    "registry": "https://verdaccio.stocko-infra.net"
   }
 }
