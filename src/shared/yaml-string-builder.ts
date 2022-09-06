@@ -1,4 +1,4 @@
-import { get, set, split, unset } from "lodash";
+import { get, set, unset } from "lodash";
 import * as YAML from "yaml";
 
 export class YamlStringBuilder {
