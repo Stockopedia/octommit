@@ -1,4 +1,4 @@
-import { get, set, unset } from "lodash";
+import { get, set, split, unset } from "lodash";
 import * as YAML from "yaml";
 
 export class YamlStringBuilder {
@@ -10,12 +10,12 @@ export class YamlStringBuilder {
   }
 
   setValue(path: string, value: string) {
-    this.file = set(this.file, path.split(":"), value);
+    this.file = set(this.file, this.makePath(path), value);
     return this;
   }
 
   pushValue(path: string, value: string) {
-    const pathArray = path.split(":");
+    const pathArray = this.makePath(path);
     const existingArray = get(this.file, pathArray) ?? [];
     this.file = set(
       this.file,
@@ -46,5 +46,11 @@ export class YamlStringBuilder {
 
   build() {
     return YAML.stringify(this.file);
+  }
+
+  private makePath(path: string) {
+    return path
+      .split(/(?<!\\):/g)
+      .map((x) => (x.includes("\\:") ? x.replace("\\:", ":") : x));
   }
 }

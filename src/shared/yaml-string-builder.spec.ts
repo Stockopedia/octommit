@@ -1,7 +1,7 @@
+import { describe, expect, it } from "@jest/globals";
 import * as YAML from "yaml";
 
 import { YamlStringBuilder } from "./yaml-string-builder";
-import { expect, describe, it } from "@jest/globals";
 
 const yamlFile = `
   name: test_file
@@ -28,6 +28,17 @@ describe("yaml file builder", () => {
     const yaml = YAML.parse(output);
 
     expect(yaml.some.obj.property).toBe("test_value");
+  });
+  it("should should update value at path with escaped colon", () => {
+    const output = new YamlStringBuilder()
+      .haystack(yamlFile)
+      .setValue("some:obj\\:property", "test_value_2")
+      .setValue("some:a:\\b:c\\d\\:e", "test_value_3")
+      .build();
+    const yaml = YAML.parse(output);
+
+    expect(yaml.some["obj:property"]).toBe("test_value_2");
+    expect(yaml.some.a["\\b"]["c\\d:e"]).toBe("test_value_3");
   });
   it("should create value at path", () => {
     const output = new YamlStringBuilder()
