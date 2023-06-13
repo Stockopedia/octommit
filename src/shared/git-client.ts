@@ -29,8 +29,8 @@ export class GitClient {
         data: Buffer.from((data as any).content, "base64").toString(),
         sha: (data as any).sha,
       };
-    } catch (e) {
-      throw new HandledError(`uanble to get file at: ${path}`, e);
+    } catch (e: unknown) {
+      throw new HandledError(`uanble to get file at: ${path}`, e as Error);
     }
   }
 
@@ -71,8 +71,8 @@ export class GitClient {
         sha: sourceSha,
       });
       return result.url;
-    } catch (e) {
-      throw new HandledError(`unable to PUT file contents`, e);
+    } catch (e: unknown) {
+      throw new HandledError(`unable to PUT file contents`, e as Error);
     }
   }
 
@@ -93,10 +93,10 @@ export class GitClient {
       });
 
       return data.url;
-    } catch (e) {
+    } catch (e: unknown) {
       throw new HandledError(
         `unable to create PR for between branches: ${sourceBranch} and ${outputBranch}`,
-        e,
+        e as Error,
       );
     }
   }
@@ -169,8 +169,11 @@ export class GitClient {
         ref: `heads/${sourceBranch}`,
       });
       existingRefData = data;
-    } catch (e) {
-      throw new HandledError(`target branch ${sourceBranch} not found`, e);
+    } catch (e: unknown) {
+      throw new HandledError(
+        `target branch ${sourceBranch} not found`,
+        e as Error,
+      );
     }
 
     try {
@@ -181,8 +184,11 @@ export class GitClient {
         sha: existingRefData.object.sha,
       });
       newRefData = data;
-    } catch (e) {
-      throw new HandledError(`unable to create branch ${outputBranch}`, e);
+    } catch (e: unknown) {
+      throw new HandledError(
+        `unable to create branch ${outputBranch}`,
+        e as Error,
+      );
     }
 
     this.eventEmitter.emit(

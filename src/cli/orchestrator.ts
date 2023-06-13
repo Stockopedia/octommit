@@ -29,7 +29,7 @@ export class Orchestrator {
 
     this.vorpal
       .command("update", "Update a yaml file in git")
-      .option("--repo <repo>", "Reopsitory")
+      .option("--repo <repo>", "Repository")
       .option("--pr", "Create a pull request")
       .option(
         "--set [<path>]=<value>",
@@ -50,8 +50,8 @@ export class Orchestrator {
         try {
           updateValidator.validate(args.options as UpdateArgs);
           return true;
-        } catch (e) {
-          this.vorpal.log(e.message);
+        } catch (e: unknown) {
+          this.vorpal.log((e as Error).message);
           process.exit(1);
         }
       })
