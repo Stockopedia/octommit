@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { isEqual } from "lodash";
 import * as YAML from "yaml";
 
@@ -6,7 +7,6 @@ import { YamlStringBuilder } from "../../shared/yaml-string-builder";
 import { UpdateArgs } from "./update-args";
 import { UpdateCommand } from "./update-command";
 import { UpdateParamsBuilder } from "./update-params-builder";
-import { expect, describe, it, jest, beforeEach } from "@jest/globals";
 
 declare global {
   namespace jest {
@@ -102,7 +102,7 @@ some:
 });
 
 function mockGitClient(methods?: any) {
-  const Mock = jest.fn<GitClient, unknown[]>(() => methods);
+  const Mock = jest.fn<() => GitClient>(() => methods);
   return new Mock();
 }
 

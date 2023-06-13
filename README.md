@@ -14,13 +14,13 @@ This package exposes both an CLI interface, and a NodeJS connector.
 
 ### Env
 
-`GITHUB_TOKEN` is the only **required** env var. This is the `personal access token` for a github user/bot
+`GITHUB_ACCESS_TOKEN` is the only **required** env var. This is the `personal access token` for a github user/bot
 
 ### Commands
 
 #### help
 
-Lists avalible `octommit` commands
+Lists available `octommit` commands
 
 ##### Usage
 
@@ -32,14 +32,27 @@ Used to update a yaml file in github
 
 #### Usage
 
-```
-octommit update --set[path.to.var]=new_value --set[foo.bar[]]=yawn --remove[some.arrayValue[]]=yawn --remove [some.property] --o --pr --repo <reponame> --org Stockopedia --sourcePath path/to/file.yaml --outputPath /path/to/outputfile.yaml --sourceBranch main --outputBranch some-other-branch --message "commit message"
+```bash
+octommit update \
+  --set \[path:to:var\]=new_value \
+  --set \[foo:bar\[\]\]=yawn \
+  --remove \[some:arrayValue\[\]\]=yawn \
+  --remove \[some:property\] \
+  --o \
+  --pr \
+  --repo <reponame> \
+  --org Stockopedia \
+  --sourcePath path/to/file.yaml \
+  --outputPath /path/to/outputfile.yaml \
+  --sourceBranch main \
+  --outputBranch some-other-branch \
+  --message "commit message"
 ```
 
 ##### Options
 
-| name         | type     | desc | env | cli |
-| ------------ | -------- | ---- | --- | --- |
+| name         | type     | desc                                                                                                                                                           | env                                                                                                                                     | cli                                                                    |
+| ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------- |
 | repo         | string   | The name of the github repository.                                                                                                                             | `REPO=<name>`                                                                                                                           | `--repo <name>`                                                        |
 | pr           | boolean  | Whether or not to open a PR. Will only do so if the target branch it different to the output branch.                                                           | `CREATE_PR=true`                                                                                                                        | `--pr`                                                                 |
 | output       | boolean  | Whether or not to output the command response                                                                                                                  |                                                                                                                                         | `--o`                                                                  |

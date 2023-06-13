@@ -1,9 +1,9 @@
 import { EventEmitter } from "events";
 
+import { beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { Octokit } from "@octokit/rest";
 
 import { GitClient } from "./git-client";
-import { expect, describe, it, jest, beforeAll } from "@jest/globals";
 import { HandledError } from "./handled-error";
 
 describe("git client", () => {
@@ -586,6 +586,6 @@ describe("git client", () => {
 });
 
 function mockOctokit(methods?: any) {
-  const Mock = jest.fn<Octokit, unknown[]>(() => methods);
+  const Mock = jest.fn<() => Octokit>(() => methods);
   return new Mock();
 }
