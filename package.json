@@ -28,7 +28,7 @@
     "@octokit/rest": "^19.0.11",
     "@types/lodash": "^4.14.195",
     "@types/vorpal": "^1.12.2",
-    "chalk": "^4.1.2",
+    "chalk": "^5.3.0",
     "dotenv": "^16.1.4",
     "events": "^3.3.0",
     "http": "0.0.1-security",
