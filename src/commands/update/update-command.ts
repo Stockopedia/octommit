@@ -32,10 +32,11 @@ export class UpdateCommand {
     const builder = this.yamlStringBuilder.haystack(file);
 
     targets.forEach(({ path, value }) => {
+      const val = parseValue(value);
       if (path.slice(-2) === "[]") {
-        builder.pushValue(path.slice(0, -2), value);
+        builder.pushValue(path.slice(0, -2), val);
       } else {
-        builder.setValue(path!, value!);
+        builder.setValue(path!, val!);
       }
     });
     removeTargets.forEach(({ path, value }) => {
@@ -70,3 +71,15 @@ export class UpdateCommand {
     return result;
   }
 }
+
+const parseValue = (val: string | number | boolean) => {
+  if (typeof val === "string") {
+    if (val.toLowerCase() === "true") return true;
+    if (val.toLowerCase() === "false") return false;
+
+    const number = Number(val);
+    if (!isNaN(number) && isFinite(number)) return number;
+  }
+
+  return val;
+};

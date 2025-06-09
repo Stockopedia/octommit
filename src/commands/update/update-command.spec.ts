@@ -50,6 +50,8 @@ some:
  deep:
    arr:
     - baz
+testBool: true
+testNumber: 42
 `;
     const args = makeArgs();
 
@@ -114,7 +116,14 @@ function makeArgs({
   sourceBranch = "sourceBranch",
   outputBranch = "outputBranch",
   message = "mesage",
-  set = ["[foo]=yo", "[bar]=yo2", "[arr[]]=baz", "[some:deep:arr[]]=baz"],
+  set = [
+    "[foo]=yo",
+    "[bar]=yo2",
+    "[arr[]]=baz",
+    "[some:deep:arr[]]=baz",
+    "[testBool]=true",
+    "[testNumber]=42",
+  ],
   remove = ["[baz]", "[arr[]]=yo"],
   pr = true,
 } = {}): UpdateArgs {
