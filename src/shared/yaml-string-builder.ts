@@ -9,12 +9,12 @@ export class YamlStringBuilder {
     return this;
   }
 
-  setValue(path: string, value: string) {
+  setValue(path: string, value: string | number | boolean) {
     this.file = set(this.file, this.makePath(path), value);
     return this;
   }
 
-  pushValue(path: string, value: string) {
+  pushValue(path: string, value: string | number | boolean) {
     const pathArray = this.makePath(path);
     const existingArray = get(this.file, pathArray) ?? [];
     this.file = set(
@@ -26,7 +26,7 @@ export class YamlStringBuilder {
     return this;
   }
 
-  removeItem(path: string, value: string) {
+  removeItem(path: string, value: string | number | boolean) {
     const pathArray = path.split(":");
     this.file = set(
       this.file,
