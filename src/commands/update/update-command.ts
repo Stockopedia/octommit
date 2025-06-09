@@ -73,12 +73,12 @@ export class UpdateCommand {
 }
 
 const parseValue = (val: string | number | boolean) => {
-  if (val === "true") {
-    return true;
-  }
+  if (typeof val === "string") {
+    if (val.toLowerCase() === "true") return true;
+    if (val.toLowerCase() === "false") return false;
 
-  if (val === "false") {
-    return false;
+    const number = Number(val);
+    if (!isNaN(number) && isFinite(number)) return number;
   }
 
   return val;

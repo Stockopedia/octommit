@@ -50,7 +50,8 @@ some:
  deep:
    arr:
     - baz
-test: true
+testBool: true
+testNumber: 42
 `;
     const args = makeArgs();
 
@@ -120,7 +121,8 @@ function makeArgs({
     "[bar]=yo2",
     "[arr[]]=baz",
     "[some:deep:arr[]]=baz",
-    "[test]=true",
+    "[testBool]=true",
+    "[testNumber]=42",
   ],
   remove = ["[baz]", "[arr[]]=yo"],
   pr = true,
