@@ -52,7 +52,8 @@ jobs:
           GITHUB_ACCESS_TOKEN: ${{ github.token }}
         run: |
           octommit update \
-            --set \[job:id\]=${{ github.run_id }}\;\[job:boolean\]=true\; \
+            --set \[job:id\]=${{ github.run_id }} \
+            --set \[job:boolean\]=true \
             --repo octommit \
             --org Stockopedia \
             --sourcePath test-file.yaml \
