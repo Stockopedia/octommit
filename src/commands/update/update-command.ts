@@ -47,8 +47,12 @@ export class UpdateCommand {
       }
     });
 
+    const f = builder.build();
+
+    console.log(f);
+
     const result = await this.gitClient.putFile(
-      builder.build(),
+      f,
       repo,
       org,
       sourceBranch,
